@@ -7,7 +7,7 @@ public class HelloElliotScript : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
-          Debug.log("Hello darkness, my old friend")
+        Debug.Log("Hello darkness, my old friend");
     }
 
     // Update is called once per frame

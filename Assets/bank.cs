@@ -26,7 +26,7 @@ public class bank : NetworkBehaviour
     [SyncVar]
     public int health;
 
-    SyncListStruct<BankGoodInfo> goods;
+    //SyncListStruct<BankGoodInfo> goods;
     public int counter;
     // Start is called before the first frame update
     void Start()
