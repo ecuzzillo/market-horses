@@ -12,21 +12,21 @@ public enum GoodType
     Watches
 }
 
+public class BankGoodList : SyncListStruct<BankGoodInfo> { }
+
 public struct BankGoodInfo
 {
-    GoodType type;
-    int inventory;
-    float price;
+    public GoodType type;
+    public int inventory;
+    public float price;
 }
-
-
 
 public class bank : NetworkBehaviour
 {
     [SyncVar]
     public int health;
 
-    //SyncListStruct<BankGoodInfo> goods;
+    BankGoodList goods;
     public int counter;
     // Start is called before the first frame update
     void Start()
@@ -47,6 +47,24 @@ public class bank : NetworkBehaviour
             else
             {
                 Debug.Log($"received health is {health}");
+            }
+        }
+    }
+
+    [Command]
+    void CmdBuyGood(GoodType type, NetworkIdentity id, int inc)
+    {
+        if (isServer)
+        {
+            for (int i = 0; i < goods.Count; i++)
+            {
+                var good = goods[i];
+                if (good.type == type)
+                {
+                   good.inventory += inc;
+                }
+                goods[i] = good;
+                break;
             }
         }
     }
