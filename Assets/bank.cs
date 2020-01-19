@@ -28,11 +28,21 @@ public class bank : NetworkBehaviour
 
     BankGoodList goods;
     public int counter;
+    public NetworkManager networkManager;
+    public NetworkIdentity myID;
+    public GameObject playerPrefab;
     // Start is called before the first frame update
     void Start()
     {
+        //networkManager.autoCreatePlayer = false;
+        networkManager.playerPrefab = playerPrefab;
         counter = 0;
+        if (!isServer)
+        {
+
+        }
     }
+
 
     // Update is called once per frame
     void Update()
