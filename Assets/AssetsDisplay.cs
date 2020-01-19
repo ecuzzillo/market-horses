@@ -24,6 +24,6 @@ public class AssetsDisplay : MonoBehaviour
     {
         NetWorthText.text = "Net Worth : " + NetWorth;
         CashAvailableText.text = "CASH: " + CashAvailable;
-        DayDisplayText.text = DayDisplay;
+        DayDisplayText.text = $"Day: {DayDisplay}";
     }
 }

@@ -329,6 +329,9 @@ MonoBehaviour:
   health: 0
   counter: 0
   networkManager: {fileID: 1848710162}
+  myID: {fileID: 0}
+  playerPrefab: {fileID: 8138258720749824192, guid: 150c4f44c7b84b841be6fd68c611227b,
+    type: 3}
 --- !u!114 &1499944510
 MonoBehaviour:
   m_ObjectHideFlags: 0
