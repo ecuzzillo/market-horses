@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class HelloElliotScript : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public void Start()
+    public void MyMessage()
     {
-        Debug.Log("Hello darkness, my old friend");
+        Debug.Log("hello darkness, my old friend");
     }
 
     // Update is called once per frame
