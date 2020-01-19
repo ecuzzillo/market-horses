@@ -15,13 +15,18 @@ public enum GoodType
 public struct BankGoodInfo
 {
     GoodType type;
-
+    int inventory;
+    float price;
 }
+
+
 
 public class bank : NetworkBehaviour
 {
     [SyncVar]
     public int health;
+
+    SyncListStruct<BankGoodInfo> goods;
     public int counter;
     // Start is called before the first frame update
     void Start()
