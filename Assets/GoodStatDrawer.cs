@@ -77,14 +77,22 @@ public class GoodStatDrawer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ClientScene.localPlayers.Count == 0)
+        if (ClientScene.localPlayers.Count == 0 || bank.Instance.goods.Count == 0)
             return;
 
         foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
         {
             var info = bank.Instance.goods.First(g => g.type == mygoodtype);
 
-            var playerGoodInfo = info.playerPositions.First(p => p.id == ClientScene.localPlayers[0].gameObject.GetComponent<NetworkIdentity>());
+            PlayerGoodInfo playerGoodInfo;
+            try
+            {
+                playerGoodInfo = info.playerPositions.First(p => ClientScene.localPlayers[0].gameObject.GetComponent<NetworkIdentity>().hasAuthority);
+            }
+            catch (InvalidOperationException e)
+            {
+                return;
+            }
             GoodPositionTexts[mygoodtype].GetComponent<Text>().text = playerGoodInfo.position.ToString();
             GoodInventoryTexts[mygoodtype].GetComponent<Text>().text = info.inventory.ToString();
             GoodPriceTexts[mygoodtype].GetComponent<Text>().text = info.price.ToString();

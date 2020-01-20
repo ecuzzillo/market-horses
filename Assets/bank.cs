@@ -35,10 +35,12 @@ public class bank : NetworkBehaviour
     public NetworkIdentity myID;
     public GameObject playerPrefab;
     public static bank Instance;
+    private bool addedInfo;
 
     public bank()
     {
         Instance = this;
+        addedInfo = false;
     }
     // Start is called before the first frame update
     void Start()
@@ -54,45 +56,39 @@ public class bank : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ClientScene.localPlayers.Count > 0)
+        if (!addedInfo && ClientScene.localPlayers.Count > 0)
         {
             if (!isServer)
             {
-
             }
             else
             {
-                foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
-                {
-                    goods.Add(new BankGoodInfo
-                    {
-                        type = mygoodtype,
-                        inventory = 100,
-                        price = 10.0f,
-                        futuresPrice = 2.0f,
-                        playerPositions = new PlayerGoodInfo[] {
+                Debug.Log($"adding player info for server");
+                AddPlayerInfo(ClientScene.localPlayers[0].gameObject.GetComponent<NetworkIdentity>());
+            }
+            addedInfo = true;
+        }
+    }
+
+
+    public void AddPlayerInfo(NetworkIdentity id)
+    {
+        foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
+        {
+            goods.Add(new BankGoodInfo
+            {
+                type = mygoodtype,
+                inventory = 100,
+                price = 10.0f,
+                futuresPrice = 2.0f,
+                playerPositions = new PlayerGoodInfo[] {
                         new PlayerGoodInfo {
-                            id = ClientScene.localPlayers[0].gameObject.GetComponent<NetworkIdentity>(),
+                            id = id,
                             futurePositions = new FuturePosition[] { },
                             position = 0
                         }
                     }
-                    });
-                }
-            }
-        }
-
-        if ((counter++ % 15) == 0)
-        {
-            if (isServer)
-            {
-                health++;
-                //Debug.Log($"incrementing health to {health}");
-            }
-            else
-            {
-                //Debug.Log($"received health is {health}");
-            }
+            });
         }
     }
 
