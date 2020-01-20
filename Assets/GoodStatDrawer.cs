@@ -2,12 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public struct PlayerGoodInfo
 {
-    GoodType type;
-    int position;
+    public NetworkIdentity id;
+    public int position;
+    public List<FuturePosition> futurePositions;
+}
+public struct FuturePosition
+{
+    float exercisePrice;
+    int count;
+
 }
 
 public class GoodStatDrawer : MonoBehaviour
@@ -37,6 +45,7 @@ public class GoodStatDrawer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (ClientScene.localPlayers.Count > 0)
+        Debug.Log($"ClientScene has {ClientScene.localPlayers[0].gameObject.name}");
     }
 }

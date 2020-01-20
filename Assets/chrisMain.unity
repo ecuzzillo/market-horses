@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 2777202}
   - component: {fileID: 2777205}
   - component: {fileID: 2777203}
+  - component: {fileID: 2777206}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -153,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   manager: {fileID: 0}
-  showGUI: 0
+  showGUI: 1
   offsetX: 0
   offsetY: 0
 --- !u!114 &2777203
@@ -168,6 +169,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e2af4b571e57dc42b576ceb3e2ba115, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &2777204
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2777201}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2777205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2777201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ec770b2049ed437b88d70bff6420bde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NetWorthText: {fileID: 1867916753}
+  CashAvailableText: {fileID: 1813084219}
+  DayDisplayText: {fileID: 0}
+--- !u!114 &2777206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2777201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10c2fd873b12541b392f10ecc4846574, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_NetworkPort: 7777
   m_ServerBindToIP: 0
   m_ServerBindAddress: 
@@ -177,12 +219,14 @@ MonoBehaviour:
   m_ScriptCRCCheck: 1
   m_MaxDelay: 0.01
   m_LogLevel: 2
-  m_PlayerPrefab: {fileID: 0}
+  m_PlayerPrefab: {fileID: 8138258720749824192, guid: 150c4f44c7b84b841be6fd68c611227b,
+    type: 3}
   m_AutoCreatePlayer: 1
   m_PlayerSpawnMethod: 0
-  m_OfflineScene: 
-  m_OnlineScene: 
-  m_SpawnPrefabs: []
+  m_OfflineScene: networktest
+  m_OnlineScene: networktest
+  m_SpawnPrefabs:
+  - {fileID: 8138258720749824192, guid: 150c4f44c7b84b841be6fd68c611227b, type: 3}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:
@@ -238,35 +282,6 @@ MonoBehaviour:
   matchSize: 4
   isNetworkActive: 0
   matchMaker: {fileID: 0}
---- !u!4 &2777204
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2777201}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2777205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2777201}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ec770b2049ed437b88d70bff6420bde, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NetWorthText: {fileID: 1867916753}
-  CashAvailableText: {fileID: 1813084219}
-  DayDisplayText: {fileID: 0}
 --- !u!1 &13010569
 GameObject:
   m_ObjectHideFlags: 0
@@ -1232,6 +1247,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1743462450 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5186279432521085502, guid: cb1c0b922ddbe49879848752984ec9aa,
+    type: 3}
+  m_PrefabInstance: {fileID: 5186279431590632744}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8258ea15b8f74c4889ce485d21cbbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1813084217
 GameObject:
   m_ObjectHideFlags: 0
@@ -1594,6 +1621,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: bank
       objectReference: {fileID: 0}
+    - target: {fileID: 5186279432521085501, guid: cb1c0b922ddbe49879848752984ec9aa,
+        type: 3}
+      propertyPath: networkManager
+      value: 
+      objectReference: {fileID: 2777206}
+    - target: {fileID: 5186279432521085501, guid: cb1c0b922ddbe49879848752984ec9aa,
+        type: 3}
+      propertyPath: myID
+      value: 
+      objectReference: {fileID: 1743462450}
+    - target: {fileID: 5186279432521085501, guid: cb1c0b922ddbe49879848752984ec9aa,
+        type: 3}
+      propertyPath: playerPrefab
+      value: 
+      objectReference: {fileID: 8138258720749824192, guid: 150c4f44c7b84b841be6fd68c611227b,
+        type: 3}
     - target: {fileID: 5186279432521085503, guid: cb1c0b922ddbe49879848752984ec9aa,
         type: 3}
       propertyPath: m_LocalPosition.x

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -12,13 +13,15 @@ public enum GoodType
     Watches
 }
 
-public class BankGoodList : SyncListStruct<BankGoodInfo> { }
+public class SyncListBankGoodInfo : SyncListStruct<BankGoodInfo> { }
 
 public struct BankGoodInfo
 {
     public GoodType type;
     public int inventory;
     public float price;
+    public float futuresPrice;
+    public PlayerGoodInfo[] playerPositions;
 }
 
 public class bank : NetworkBehaviour
@@ -26,7 +29,7 @@ public class bank : NetworkBehaviour
     [SyncVar]
     public int health;
 
-    BankGoodList goods;
+    public SyncListBankGoodInfo goods = new SyncListBankGoodInfo();
     public int counter;
     public NetworkManager networkManager;
     public NetworkIdentity myID;
@@ -35,14 +38,29 @@ public class bank : NetworkBehaviour
     void Start()
     {
         //networkManager.autoCreatePlayer = false;
-        networkManager.playerPrefab = playerPrefab;
+        /*networkManager.playerPrefab = playerPrefab;
+        ClientScene.RegisterPrefab(playerPrefab);
+        networkManager.spawnPrefabs.Add(playerPrefab);*/
         counter = 0;
         if (!isServer)
         {
 
         }
+        else
+        {
+            foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
+            {
+                goods.Add(new BankGoodInfo
+                {
+                    type = mygoodtype,
+                    inventory = 100,
+                    price = 10.0f,
+                    futuresPrice = 2.0f,
+                    playerPositions = new PlayerGoodInfo[] { }
+                });
+            }
+        }
     }
-
 
     // Update is called once per frame
     void Update()
