@@ -34,6 +34,12 @@ public class bank : NetworkBehaviour
     public NetworkManager networkManager;
     public NetworkIdentity myID;
     public GameObject playerPrefab;
+    public static bank Instance;
+
+    public bank()
+    {
+        Instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {

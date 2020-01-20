@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -9,7 +10,7 @@ public struct PlayerGoodInfo
 {
     public NetworkIdentity id;
     public int position;
-    public List<FuturePosition> futurePositions;
+    public FuturePosition[] futurePositions;
 }
 public struct FuturePosition
 {
@@ -21,6 +22,11 @@ public struct FuturePosition
 public class GoodStatDrawer : MonoBehaviour
 {
     public GameObject GoodStatRow;
+    public Dictionary<GoodType, GameObject> GoodNameTexts = new Dictionary<GoodType, GameObject>();
+    public Dictionary<GoodType, GameObject> GoodPositionTexts = new Dictionary<GoodType, GameObject>();
+    public Dictionary<GoodType, GameObject> GoodInventoryTexts = new Dictionary<GoodType, GameObject>();
+    public Dictionary<GoodType, GameObject> GoodPriceTexts = new Dictionary<GoodType, GameObject>();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,40 +37,37 @@ public class GoodStatDrawer : MonoBehaviour
         // var price = GoodStatRow.GetComponent<Text>();
         foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
         {
-            var newTextObject = GoodStatRow;
+            GoodNameTexts[mygoodtype] = GoodStatRow;
             if (i > 0)
             {
-                newTextObject = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
+                GoodNameTexts[mygoodtype] = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
             }
 
-            var pos2 = newTextObject.transform.position;
+            var pos2 = GoodNameTexts[mygoodtype].transform.position;
             pos2.y -= 15 * i;
-            newTextObject.transform.position = pos2;
+            GoodNameTexts[mygoodtype].transform.position = pos2;
             
 
-            var goodPositionText = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
-            var pos = goodPositionText.transform.position;
+            GoodPositionTexts[mygoodtype] = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
+            var pos = GoodPositionTexts[mygoodtype].transform.position;
             pos.y -= 15 * i;
             pos.x += 50 * 2;
-            goodPositionText.transform.position = pos;
+            GoodPositionTexts[mygoodtype].transform.position = pos;
 
-            var goodAvailableText = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
-            pos = goodAvailableText.transform.position;
+            GoodInventoryTexts[mygoodtype] = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
+            pos = GoodInventoryTexts[mygoodtype].transform.position;
             pos.y -= 15 * i;
             pos.x += 50 * 3;
-            goodAvailableText.transform.position = pos;
+            GoodInventoryTexts[mygoodtype].transform.position = pos;
 
-            var goodPriceText = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
-            pos = goodPriceText.transform.position;
+            GoodPriceTexts[mygoodtype] = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
+            pos = GoodPriceTexts[mygoodtype].transform.position;
             pos.y -= 15 * i;
             pos.x += 50 * 4;
-            goodPriceText.transform.position = pos;
+            GoodPriceTexts[mygoodtype].transform.position = pos;
 
-            newTextObject.GetComponent<Text>().text = mygoodtype.ToString();
-            goodPriceText.GetComponent<Text>().text = $"{mygoodtype} : VAL1     VAL2     VAL3     VAL4";
-            goodPositionText.GetComponent<Text>().text = "position";
-            goodAvailableText.GetComponent<Text>().text = "available";
-            goodPriceText.GetComponent<Text>().text = "price";
+            GoodNameTexts[mygoodtype].GetComponent<Text>().text = mygoodtype.ToString();
+            GoodPriceTexts[mygoodtype].GetComponent<Text>().text = $"{mygoodtype} : VAL1     VAL2     VAL3     VAL4";
 
             i++;
         }
@@ -74,7 +77,17 @@ public class GoodStatDrawer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ClientScene.localPlayers.Count > 0)
-        Debug.Log($"ClientScene has {ClientScene.localPlayers[0].gameObject.name}");
+        if (ClientScene.localPlayers.Count == 0)
+            return;
+
+        foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
+        {
+            var info = bank.Instance.goods.First(g => g.type == mygoodtype);
+
+            var playerGoodInfo = info.playerPositions.First(p => p.id == ClientScene.localPlayers[0].gameObject.GetComponent<NetworkIdentity>());
+            GoodPositionTexts[mygoodtype].GetComponent<Text>().text = playerGoodInfo.position.ToString();
+            GoodInventoryTexts[mygoodtype].GetComponent<Text>().text = info.inventory.ToString();
+            GoodPriceTexts[mygoodtype].GetComponent<Text>().text = info.price.ToString();
+        }
     }
 }
