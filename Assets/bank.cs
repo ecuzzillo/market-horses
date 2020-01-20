@@ -87,11 +87,11 @@ public class bank : NetworkBehaviour
             if (isServer)
             {
                 health++;
-                Debug.Log($"incrementing health to {health}");
+                //Debug.Log($"incrementing health to {health}");
             }
             else
             {
-                Debug.Log($"received health is {health}");
+                //Debug.Log($"received health is {health}");
             }
         }
     }
