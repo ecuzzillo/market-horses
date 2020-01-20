@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -35,12 +36,10 @@ public class bank : NetworkBehaviour
     public NetworkIdentity myID;
     public GameObject playerPrefab;
     public static bank Instance;
-    private bool addedInfo;
 
     public bank()
     {
         Instance = this;
-        addedInfo = false;
     }
     // Start is called before the first frame update
     void Start()
@@ -53,42 +52,41 @@ public class bank : NetworkBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (!addedInfo && ClientScene.localPlayers.Count > 0)
-        {
-            if (!isServer)
-            {
-            }
-            else
-            {
-                Debug.Log($"adding player info for server");
-                AddPlayerInfo(ClientScene.localPlayers[0].gameObject.GetComponent<NetworkIdentity>());
-            }
-            addedInfo = true;
-        }
-    }
-
-
     public void AddPlayerInfo(NetworkIdentity id)
     {
-        foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
+        if (goods.Count > 0)
         {
-            goods.Add(new BankGoodInfo
+            for (int i = 0; i < goods.Count; i++)
             {
-                type = mygoodtype,
-                inventory = 100,
-                price = 10.0f,
-                futuresPrice = 2.0f,
-                playerPositions = new PlayerGoodInfo[] {
+                var good = goods[i];
+                good.playerPositions = good.playerPositions.Append(new PlayerGoodInfo
+                {
+                    id = id,
+                    futurePositions = new FuturePosition[] { },
+                    position = 0
+                }).ToArray();
+                goods[i] = good;
+            }
+        }
+        else
+        {
+            foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
+            {
+                goods.Add(new BankGoodInfo
+                {
+                    type = mygoodtype,
+                    inventory = 100,
+                    price = 10.0f,
+                    futuresPrice = 2.0f,
+                    playerPositions = new PlayerGoodInfo[] {
                         new PlayerGoodInfo {
                             id = id,
                             futurePositions = new FuturePosition[] { },
                             position = 0
                         }
                     }
-            });
+                });
+            }
         }
     }
 
@@ -106,6 +104,32 @@ public class bank : NetworkBehaviour
                 }
                 goods[i] = good;
                 break;
+            }
+        }
+    }
+
+    public void BuyStock(GoodType type, NetworkIdentity id, int inc)
+    {
+        for (int i=0; i<goods.Count; i++)
+        {
+            var good = goods[i];
+            if (good.type == type)
+            {
+                var positions = good.playerPositions;
+                for (int j=0; j<positions.Length; j++)
+                {
+                    var pos = positions[j];
+                    if (pos.id == id)
+                    {
+                        // i have you now
+                        pos.position += inc;
+                        positions[j] = pos;
+                        good.inventory -= inc;
+                        goods[i] = good;
+
+                        return;
+                    }
+                }
             }
         }
     }

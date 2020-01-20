@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class PlayerBankActions : MonoBehaviour
 {
     // Start is called before the first frame update
-
+    public GoodType type;
 
     public void BuyStock()
     {
-        Debug.Log("BUYING");
+        var player = ClientScene.localPlayers.First(p => p.gameObject.GetComponent<NetworkIdentity>().hasAuthority);
+        var id = player.gameObject.GetComponent<NetworkIdentity>();
+        player.gameObject.GetComponent<Player>().CmdBuyStock(type, id, 1);
     }
 
     public void SellStock()

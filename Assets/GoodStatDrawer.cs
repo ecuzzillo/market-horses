@@ -87,7 +87,7 @@ public class GoodStatDrawer : MonoBehaviour
             PlayerGoodInfo playerGoodInfo;
             try
             {
-                playerGoodInfo = info.playerPositions.First(p => ClientScene.localPlayers[0].gameObject.GetComponent<NetworkIdentity>().hasAuthority);
+                playerGoodInfo = info.playerPositions.First(p => p.id.hasAuthority);
             }
             catch (InvalidOperationException e)
             {

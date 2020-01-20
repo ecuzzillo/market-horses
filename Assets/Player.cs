@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class Player : NetworkBehaviour
 {
-    NetworkIdentity id;
+    public NetworkIdentity id;
     bool added = false;
 
     // Start is called before the first frame update
@@ -17,7 +17,7 @@ public class Player : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!added && !isServer && ClientScene.localPlayers.Count > 0)
+        if (!added && ClientScene.localPlayers.Count > 0)
         {
             added = true;
             id = GetComponent<NetworkIdentity>();
@@ -34,5 +34,11 @@ public class Player : NetworkBehaviour
     {
         Debug.Log("trying to add player info for " + id);
         bank.Instance.AddPlayerInfo(id);
+    }
+
+    [Command]
+    public void CmdBuyStock(GoodType type, NetworkIdentity id, int inc)
+    {
+        bank.Instance.BuyStock(type, id, inc);
     }
 }
