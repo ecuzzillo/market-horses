@@ -5,9 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/networktest.unity
-    guid: d5b983b3718a79a48ac3decd0dd7642f
   - enabled: 1
     path: Assets/chrisMain.unity
     guid: dc485a1035f214ace9ae8b875a20c376

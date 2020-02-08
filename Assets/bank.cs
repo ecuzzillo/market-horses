@@ -33,7 +33,7 @@ public class bank : NetworkBehaviour
     public SyncListBankGoodInfo goods = new SyncListBankGoodInfo();
     public int counter;
     public NetworkManager networkManager;
-    public NetworkIdentity myID;
+    public NetworkInstanceId myID;
     public GameObject playerPrefab;
     public static bank Instance;
 
@@ -48,11 +48,12 @@ public class bank : NetworkBehaviour
         /*networkManager.playerPrefab = playerPrefab;
         ClientScene.RegisterPrefab(playerPrefab);
         networkManager.spawnPrefabs.Add(playerPrefab);*/
+        myID = GetComponent<NetworkIdentity>().netId;
         counter = 0;
 
     }
 
-    public void AddPlayerInfo(NetworkIdentity id)
+    public void AddPlayerInfo(NetworkInstanceId id)
     {
         if (goods.Count > 0)
         {
@@ -78,7 +79,7 @@ public class bank : NetworkBehaviour
                     inventory = 100,
                     price = 10.0f,
                     futuresPrice = 2.0f,
-                    playerPositions = new PlayerGoodInfo[] {
+                    playerPositions = new[] {
                         new PlayerGoodInfo {
                             id = id,
                             futurePositions = new FuturePosition[] { },
@@ -108,7 +109,7 @@ public class bank : NetworkBehaviour
         }
     }
 
-    public void BuyStock(GoodType type, NetworkIdentity id, int inc)
+    public void BuyStock(GoodType type, NetworkInstanceId id, int inc)
     {
         for (int i=0; i<goods.Count; i++)
         {
