@@ -5,13 +5,15 @@ using UnityEngine.Networking;
 
 public class Player : NetworkBehaviour
 {
-    public NetworkIdentity id;
+    public NetworkInstanceId id;
+    public NetworkIdentity idobj;
     bool added = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        idobj = GetComponent<NetworkIdentity>();
+        id = idobj.netId;
     }
 
     // Update is called once per frame
@@ -20,10 +22,9 @@ public class Player : NetworkBehaviour
         if (!added && ClientScene.localPlayers.Count > 0)
         {
             added = true;
-            id = GetComponent<NetworkIdentity>();
-            if (id.hasAuthority)
+            if (idobj.hasAuthority)
             {
-                Debug.Log("trying to add player info for " + id.isLocalPlayer);
+                Debug.Log("trying to add player info for " + idobj.isLocalPlayer);
                 CmdAddPlayerInfo();
             }
         }
@@ -37,7 +38,7 @@ public class Player : NetworkBehaviour
     }
 
     [Command]
-    public void CmdBuyStock(GoodType type, NetworkIdentity id, int inc)
+    public void CmdBuyStock(GoodType type, NetworkInstanceId id, int inc)
     {
         bank.Instance.BuyStock(type, id, inc);
     }

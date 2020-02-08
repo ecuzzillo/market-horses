@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public struct PlayerGoodInfo
 {
-    public NetworkIdentity id;
+    public NetworkInstanceId id;
     public int position;
     public FuturePosition[] futurePositions;
 }
@@ -88,7 +88,8 @@ public class GoodStatDrawer : MonoBehaviour
             PlayerGoodInfo playerGoodInfo;
             try
             {
-                playerGoodInfo = info.playerPositions.First(p => p.id.hasAuthority);
+                playerGoodInfo = info.playerPositions.First(
+                    p => NetworkServer.FindLocalObject(p.id)?.GetComponent<NetworkIdentity>().hasAuthority ?? false);
             }
             catch (InvalidOperationException e)
             {
