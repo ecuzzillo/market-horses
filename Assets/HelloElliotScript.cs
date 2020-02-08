@@ -7,7 +7,7 @@ public class HelloElliotScript : MonoBehaviour
     public GameObject OpenModal;
 
 
-    public void MyMessage()
+    public void ToggleActionModal()
     {
         //gameObject.SetActive(false);
         if (gameObject.active)
