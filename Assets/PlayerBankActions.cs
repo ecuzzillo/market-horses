@@ -20,7 +20,7 @@ public class PlayerBankActions : MonoBehaviour
     {
         Debug.Log("Selling");
         var player = ClientScene.localPlayers.First(p => p.gameObject.GetComponent<NetworkIdentity>().hasAuthority);
-        var id = player.gameObject.GetComponent<NetworkIdentity>();
+        var id = player.gameObject.GetComponent<NetworkIdentity>().netId;
         player.gameObject.GetComponent<Player>().CmdBuyStock(type, id, -1);
     }
 
