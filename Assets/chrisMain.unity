@@ -1845,7 +1845,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 1
       - m_Target: {fileID: 225586349}
-        m_MethodName: MyMessage
+        m_MethodName: ToggleActionModal
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

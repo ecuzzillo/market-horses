@@ -45,25 +45,26 @@ public class GoodStatDrawer : MonoBehaviour
 
             var pos2 = GoodNameTexts[mygoodtype].transform.position;
             pos2.y -= 15 * i;
+            pos2.x += 75;
             GoodNameTexts[mygoodtype].transform.position = pos2;
             
 
             GoodPositionTexts[mygoodtype] = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
             var pos = GoodPositionTexts[mygoodtype].transform.position;
             pos.y -= 15 * i;
-            pos.x += 50 * 2;
+            pos.x += 75 * 2;
             GoodPositionTexts[mygoodtype].transform.position = pos;
 
             GoodInventoryTexts[mygoodtype] = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
             pos = GoodInventoryTexts[mygoodtype].transform.position;
             pos.y -= 15 * i;
-            pos.x += 50 * 3;
+            pos.x += 75 * 3;
             GoodInventoryTexts[mygoodtype].transform.position = pos;
 
             GoodPriceTexts[mygoodtype] = Instantiate(GoodStatRow, GoodStatRow.transform.parent);
             pos = GoodPriceTexts[mygoodtype].transform.position;
             pos.y -= 15 * i;
-            pos.x += 50 * 4;
+            pos.x += 75 * 4;
             GoodPriceTexts[mygoodtype].transform.position = pos;
 
             GoodNameTexts[mygoodtype].GetComponent<Text>().text = mygoodtype.ToString();

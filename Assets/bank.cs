@@ -76,7 +76,7 @@ public class bank : NetworkBehaviour
                 {
                     type = mygoodtype,
                     inventory = 100,
-                    price = 10.0f,
+                    price = 12.0f,
                     futuresPrice = 2.0f,
                     playerPositions = new PlayerGoodInfo[] {
                         new PlayerGoodInfo {
