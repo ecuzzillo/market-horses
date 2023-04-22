@@ -16,15 +16,14 @@ public enum GoodType
     Watches
 }
 
-public class SyncListBankGoodInfo :  NetworkList<BankGoodInfo> { }
 
-
-public struct BankGoodInfo : IEquatable<BankGoodInfo>
+public struct BankGoodInfo : INetworkSerializeByMemcpy, IEquatable<BankGoodInfo>
 {
     public GoodType type;
     public int inventory;
     public float price;
     public float futuresPrice;
+    //public PlayerGoodInfo playerPositions;
     public FixedList4096Bytes<PlayerGoodInfo> playerPositions;
 
     public bool Equals(BankGoodInfo other)
@@ -45,13 +44,23 @@ public struct BankGoodInfo : IEquatable<BankGoodInfo>
     {
         return HashCode.Combine((int)type, inventory, price, futuresPrice, playerPositions);
     }
+
+    /*public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {*/
+        /*serializer.SerializeValue(ref type);
+        serializer.SerializeValue(ref inventory);*/
+        //serializer.SerializeValue(ref price);
+        //serializer.SerializeValue(ref futuresPrice);
+        /*var forceNetworkSerializeByMemcpy = new ForceNetworkSerializeByMemcpy<FixedList4096Bytes<PlayerGoodInfo>>(playerPositions);
+        serializer.SerializeValue(ref forceNetworkSerializeByMemcpy);*/
+    //}
 }
 
 public class bank : NetworkBehaviour
 {
     public NetworkVariable<int> health;
 
-    public SyncListBankGoodInfo goods;
+    public NetworkList<BankGoodInfo> goods;
     public int counter;
     public NetworkManager networkManager;
     /*public NetworkInstanceId myID;*/
@@ -65,7 +74,7 @@ public class bank : NetworkBehaviour
 
     void Start()
     {
-        goods = new SyncListBankGoodInfo();
+        goods = new NetworkList<BankGoodInfo>();
         //networkManager.au = false;
         /*networkManager.playerPrefab = playerPrefab;
         ClientScene.RegisterPrefab(playerPrefab);
@@ -91,8 +100,8 @@ public class bank : NetworkBehaviour
         {
             foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
             {
-                goods.Add(new BankGoodInfo
-                {
+                goods.Add(new BankGoodInfo()
+                /*{
                     type = mygoodtype,
                     inventory = 100,
                     price = 12.0f,
@@ -103,8 +112,8 @@ public class bank : NetworkBehaviour
                             //futurePositions = new FuturePosition[] { },
                             position = 0
                         }
-                    }*/
-                });
+                    }* /
+                }*/);
             }
         }
     }
@@ -117,10 +126,10 @@ public class bank : NetworkBehaviour
             for (int i = 0; i < goods.Count; i++)
             {
                 var good = goods[i];
-                if (good.type == type)
+                /*if (good.type == type)
                 {
                    good.inventory += inc;
-                }
+                }*/
                 goods[i] = good;
                 break;
             }
@@ -132,10 +141,10 @@ public class bank : NetworkBehaviour
         for (int i=0; i<goods.Count; i++)
         {
             var good = goods[i];
-            if (good.type == type)
+            /*if (good.type == type)
             {
                 var positions = good.playerPositions;
-                for (int j=0; j<positions.Length; j++)
+                /*for (int j=0; j<positions.Length; j++)
                 {
                     var pos = positions[j];
                     if (pos.id == id)
@@ -148,8 +157,8 @@ public class bank : NetworkBehaviour
 
                         return;
                     }
-                }
-            }
+                }* /
+            }*/
         }
     }
 }

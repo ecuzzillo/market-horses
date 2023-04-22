@@ -185,7 +185,8 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 128620025}
-    PlayerPrefab: {fileID: 0}
+    PlayerPrefab: {fileID: 8138258720749824192, guid: 150c4f44c7b84b841be6fd68c611227b,
+      type: 3}
     NetworkPrefabs: []
     TickRate: 30
     ClientConnectionBufferTimeout: 10
@@ -318,6 +319,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: bank
       objectReference: {fileID: 0}
+    - target: {fileID: 5186279432521085501, guid: cb1c0b922ddbe49879848752984ec9aa,
+        type: 3}
+      propertyPath: networkManager
+      value: 
+      objectReference: {fileID: 128620026}
     - target: {fileID: 5186279432521085503, guid: cb1c0b922ddbe49879848752984ec9aa,
         type: 3}
       propertyPath: m_RootOrder

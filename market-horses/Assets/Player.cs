@@ -31,6 +31,12 @@ public class Player : NetworkBehaviour
         }
     }
 
+    public override void OnNetworkSpawn()
+    {
+        Debug.Log("i spawned");
+        base.OnNetworkSpawn();
+    }
+
     [ServerRpc]
     void CmdAddPlayerInfoServerRpc()
     {
