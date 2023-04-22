@@ -151,8 +151,8 @@ public class bank : NetworkBehaviour
                         pos.position += inc;
                         positions[j] = pos;
                         good.inventory -= inc;
+                        good.playerPositions = positions;
                         goods[i] = good;
-
                         return;
                     }
                 }
