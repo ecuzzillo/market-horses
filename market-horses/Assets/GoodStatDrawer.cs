@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public struct PlayerGoodInfo
 {
-    public NetworkInstanceId id;
+    //public NetworkInstanceId id;
     public int position;
     public FuturePosition[] futurePositions;
 }
@@ -78,18 +78,18 @@ public class GoodStatDrawer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (ClientScene.localPlayers.Count == 0 || bank.Instance.goods.Count == 0)
+        //if (ClientScene.localPlayers.Count == 0 || bank.Instance.goods.Count == 0)
             return;
 
         foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
         {
             var info = bank.Instance.goods.First(g => g.type == mygoodtype);
 
-            PlayerGoodInfo playerGoodInfo;
+            PlayerGoodInfo playerGoodInfo = default;
             try
             {
-                playerGoodInfo = info.playerPositions.First(
-                    p => NetworkServer.FindLocalObject(p.id)?.GetComponent<NetworkIdentity>().hasAuthority ?? false);
+                /*playerGoodInfo = info.playerPositions.First(
+                    p => NetworkServer.FindLocalObject(p.id)?.GetComponent<NetworkIdentity>().hasAuthority ?? false);*/
             }
             catch (InvalidOperationException e)
             {

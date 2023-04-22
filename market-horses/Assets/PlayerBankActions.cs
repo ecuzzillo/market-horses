@@ -11,17 +11,17 @@ public class PlayerBankActions : MonoBehaviour
 
     public void BuyStock()
     {
-        var player = ClientScene.localPlayers.First(p => p.gameObject.GetComponent<NetworkIdentity>().hasAuthority);
+        /*var player = ClientScene.localPlayers.First(p => p.gameObject.GetComponent<NetworkIdentity>().hasAuthority);
         var id = player.gameObject.GetComponent<NetworkIdentity>().netId;
-        player.gameObject.GetComponent<Player>().CmdBuyStock(type, id, 1);
+        player.gameObject.GetComponent<Player>().CmdBuyStock(type, id, 1);*/
     }
 
     public void SellStock()
     {
         Debug.Log("Selling");
-        var player = ClientScene.localPlayers.First(p => p.gameObject.GetComponent<NetworkIdentity>().hasAuthority);
+        /*var player = ClientScene.localPlayers.First(p => p.gameObject.GetComponent<NetworkIdentity>().hasAuthority);
         var id = player.gameObject.GetComponent<NetworkIdentity>().netId;
-        player.gameObject.GetComponent<Player>().CmdBuyStock(type, id, -1);
+        player.gameObject.GetComponent<Player>().CmdBuyStock(type, id, -1);*/
     }
 
     public void ExerciseFuture()
@@ -32,10 +32,4 @@ public class PlayerBankActions : MonoBehaviour
     {
         Debug.Log("Buy future");
      }
-
-// Update is called once per frame
-void Update()
-    {
-        
-    }
 }

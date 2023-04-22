@@ -14,7 +14,9 @@ public enum GoodType
     Watches
 }
 
-public class SyncListBankGoodInfo : SyncListStruct<BankGoodInfo> { }
+public class SyncListBankGoodInfo : List<BankGoodInfo>//: SyncListStruct<BankGoodInfo> { }
+{
+} 
 
 public struct BankGoodInfo
 {
@@ -25,15 +27,15 @@ public struct BankGoodInfo
     public PlayerGoodInfo[] playerPositions;
 }
 
-public class bank : NetworkBehaviour
+public class bank : MonoBehaviour//: NetworkBehaviour
 {
-    [SyncVar]
+    //[SyncVar]
     public int health;
 
     public SyncListBankGoodInfo goods = new SyncListBankGoodInfo();
     public int counter;
-    public NetworkManager networkManager;
-    public NetworkInstanceId myID;
+    /*public NetworkManager networkManager;
+    public NetworkInstanceId myID;*/
     public GameObject playerPrefab;
     public static bank Instance;
 
@@ -48,12 +50,12 @@ public class bank : NetworkBehaviour
         /*networkManager.playerPrefab = playerPrefab;
         ClientScene.RegisterPrefab(playerPrefab);
         networkManager.spawnPrefabs.Add(playerPrefab);*/
-        myID = GetComponent<NetworkIdentity>().netId;
+        //myID = GetComponent<NetworkIdentity>().netId;
         counter = 0;
 
     }
 
-    public void AddPlayerInfo(NetworkInstanceId id)
+    public void AddPlayerInfo()//NetworkInstanceId id)
     {
         if (goods.Count > 0)
         {
@@ -62,7 +64,7 @@ public class bank : NetworkBehaviour
                 var good = goods[i];
                 good.playerPositions = good.playerPositions.Append(new PlayerGoodInfo
                 {
-                    id = id,
+                    //id = id,
                     futurePositions = new FuturePosition[] { },
                     position = 0
                 }).ToArray();
@@ -81,7 +83,7 @@ public class bank : NetworkBehaviour
                     futuresPrice = 2.0f,
                     playerPositions = new[] {
                         new PlayerGoodInfo {
-                            id = id,
+                            //id = id,
                             futurePositions = new FuturePosition[] { },
                             position = 0
                         }
@@ -91,10 +93,10 @@ public class bank : NetworkBehaviour
         }
     }
 
-    [Command]
-    void CmdBuyGood(GoodType type, NetworkIdentity id, int inc)
+    //[Command]
+    void CmdBuyGood(GoodType type, /*NetworkIdentity id, */int inc)
     {
-        if (isServer)
+        //if (isServer)
         {
             for (int i = 0; i < goods.Count; i++)
             {
@@ -109,7 +111,7 @@ public class bank : NetworkBehaviour
         }
     }
 
-    public void BuyStock(GoodType type, NetworkInstanceId id, int inc)
+    public void BuyStock(GoodType type,/* NetworkInstanceId id,*/ int inc)
     {
         for (int i=0; i<goods.Count; i++)
         {
@@ -120,7 +122,7 @@ public class bank : NetworkBehaviour
                 for (int j=0; j<positions.Length; j++)
                 {
                     var pos = positions[j];
-                    if (pos.id == id)
+                    //if (pos.id == id)
                     {
                         // i have you now
                         pos.position += inc;
