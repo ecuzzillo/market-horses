@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class AssetsDisplay : MonoBehaviour
 {
-    // Start is called before the first frame update
     void Start()
     {
         NetWorthText.text = "Net Worth : " + NetWorth;
@@ -13,7 +12,6 @@ public class AssetsDisplay : MonoBehaviour
         
     }
 
-    // Update is called once per frame
     private int NetWorth = 0001;
     private int CashAvailable = 9999;
     private int DayDisplay = 3;

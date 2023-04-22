@@ -51,7 +51,7 @@ public class bank : NetworkBehaviour
 {
     public NetworkVariable<int> health;
 
-    public SyncListBankGoodInfo goods = new SyncListBankGoodInfo();
+    public SyncListBankGoodInfo goods;
     public int counter;
     public NetworkManager networkManager;
     /*public NetworkInstanceId myID;*/
@@ -62,9 +62,10 @@ public class bank : NetworkBehaviour
     {
         Instance = this;
     }
-    // Start is called before the first frame update
+
     void Start()
     {
+        goods = new SyncListBankGoodInfo();
         //networkManager.au = false;
         /*networkManager.playerPrefab = playerPrefab;
         ClientScene.RegisterPrefab(playerPrefab);
@@ -109,7 +110,7 @@ public class bank : NetworkBehaviour
     }
 
     [ServerRpc]
-    void CmdBuyGoodServerRpc(GoodType type, NetworkObject id, int inc)
+    void CmdBuyGoodServerRpc(GoodType type, ulong id, int inc)
     {
         if (IsServer)
         {

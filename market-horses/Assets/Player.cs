@@ -23,24 +23,24 @@ public class Player : NetworkBehaviour
         if (!added)// && ClientScene.localPlayers.Count > 0)
         {
             added = true;
-            //if (idobj.hasAuthority)
+            if (idobj.IsOwner)
             {
-                //Debug.Log("trying to add player info for " + idobj.isLocalPlayer);
-                CmdAddPlayerInfo();
+                Debug.Log("trying to add player info for " + idobj.IsLocalPlayer);
+                CmdAddPlayerInfoServerRpc();
             }
         }
     }
 
     [ServerRpc]
-    void CmdAddPlayerInfo()
+    void CmdAddPlayerInfoServerRpc()
     {
         Debug.Log("trying to add player info for " + id);
         bank.Instance.AddPlayerInfo(id);
     }
 
     [ServerRpc]
-    public void CmdBuyStock(GoodType type)//, NetworkInstanceId id, int inc)
+    public void CmdBuyStockServerRpc(GoodType type, ulong id, int inc)
     {
-        //bank.Instance.BuyStock(type, id, inc);
+        bank.Instance.BuyStock(type, id, inc);
     }
 }
