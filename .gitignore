@@ -11,6 +11,7 @@ market-horses/[Ll]ogs/
 market-horses/[Mm]emoryCaptures/
 market-horses/.idea
 market-horses/UserSettings
+market-horses/.vsconfig
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta

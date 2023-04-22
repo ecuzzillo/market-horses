@@ -19,21 +19,37 @@ public class Player : NetworkBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        if (!added)// && ClientScene.localPlayers.Count > 0)
+    { 
+        if (idobj.IsOwner && !added)
         {
-            added = true;
-            if (idobj.IsOwner)
+            Debug.Log($"trying to add player info for player {id}");
+            var bank = FindAnyObjectByType<bank>();
+            var no = bank.GetComponent<NetworkObject>();
+            Debug.Log($"IsSpawned: {no.IsSpawned}");
+            if (!bank.IsSpawned)
             {
-                Debug.Log("trying to add player info for " + idobj.IsLocalPlayer);
-                CmdAddPlayerInfoServerRpc();
+                return;
             }
+            added = true;
+            CmdAddPlayerInfoServerRpc();
+        }
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Debug.Log("K");
+            CmdBuyStockServerRpc(GoodType.Pigs, id, 1);
+        }
+        if (Input.GetKeyDown(KeyCode.J))
+        {
+            Debug.Log("J");
+            var bank = FindAnyObjectByType<bank>();
+            Debug.Log("Position: " + bank.goods[0].playerPositions[0].position);
         }
     }
 
     public override void OnNetworkSpawn()
     {
-        Debug.Log("i spawned");
+        Debug.Log($"Spawned player {id}");
         base.OnNetworkSpawn();
     }
 
@@ -41,12 +57,12 @@ public class Player : NetworkBehaviour
     void CmdAddPlayerInfoServerRpc()
     {
         Debug.Log("trying to add player info for " + id);
-        bank.Instance.AddPlayerInfo(id);
+        FindAnyObjectByType<bank>().AddPlayerInfo(id);
     }
 
     [ServerRpc]
     public void CmdBuyStockServerRpc(GoodType type, ulong id, int inc)
     {
-        bank.Instance.BuyStock(type, id, inc);
+        FindAnyObjectByType<bank>().BuyStock(type, id, inc);
     }
 }

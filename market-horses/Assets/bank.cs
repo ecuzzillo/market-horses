@@ -23,7 +23,6 @@ public struct BankGoodInfo : INetworkSerializeByMemcpy, IEquatable<BankGoodInfo>
     public int inventory;
     public float price;
     public float futuresPrice;
-    //public PlayerGoodInfo playerPositions;
     public FixedList4096Bytes<PlayerGoodInfo> playerPositions;
 
     public bool Equals(BankGoodInfo other)
@@ -44,16 +43,6 @@ public struct BankGoodInfo : INetworkSerializeByMemcpy, IEquatable<BankGoodInfo>
     {
         return HashCode.Combine((int)type, inventory, price, futuresPrice, playerPositions);
     }
-
-    /*public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-    {*/
-        /*serializer.SerializeValue(ref type);
-        serializer.SerializeValue(ref inventory);*/
-        //serializer.SerializeValue(ref price);
-        //serializer.SerializeValue(ref futuresPrice);
-        /*var forceNetworkSerializeByMemcpy = new ForceNetworkSerializeByMemcpy<FixedList4096Bytes<PlayerGoodInfo>>(playerPositions);
-        serializer.SerializeValue(ref forceNetworkSerializeByMemcpy);*/
-    //}
 }
 
 public class bank : NetworkBehaviour
@@ -63,7 +52,7 @@ public class bank : NetworkBehaviour
     public NetworkList<BankGoodInfo> goods;
     public int counter;
     public NetworkManager networkManager;
-    /*public NetworkInstanceId myID;*/
+    public ulong myID;
     public GameObject playerPrefab;
     public static bank Instance;
 
@@ -75,47 +64,54 @@ public class bank : NetworkBehaviour
     void Start()
     {
         goods = new NetworkList<BankGoodInfo>();
-        //networkManager.au = false;
-        /*networkManager.playerPrefab = playerPrefab;
-        ClientScene.RegisterPrefab(playerPrefab);
-        networkManager.spawnPrefabs.Add(playerPrefab);*/
-        //myID = GetComponent<NetworkObject>().netId;
+        myID = GetComponent<NetworkObject>().NetworkObjectId;
         counter = 0;
-
     }
 
     public void AddPlayerInfo(ulong id)
     {
+        Debug.Log($"Server: {IsServer} -- Host: {IsHost} -- Client: {IsClient}");
+        if (!IsHost) { Debug.Log("WE NOT SERVER NOW");  return; }
+        Debug.Log("WE SERVER NOW");
         if (goods.Count > 0)
         {
-            //this may or may not make sense anymore
-            /*for (int i = 0; i < goods.Count; i++)
+            for (int i = 0; i < goods.Count; i++)
             {
                 var good = goods[i];
-                good.playerPositions = good.playerPositions.Append(default(PlayerGoodInfo)).ToArray();
+                good.playerPositions.Add(new PlayerGoodInfo()
+                {
+                    id = id,
+                    position = 0
+                });
                 goods[i] = good;
-            }*/
+            }
         }
         else
         {
             foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
             {
-                goods.Add(new BankGoodInfo()
-                /*{
+                var bgi = new BankGoodInfo()
+                {
                     type = mygoodtype,
                     inventory = 100,
                     price = 12.0f,
                     futuresPrice = 2.0f,
-                    playerPositions = default/*new[] {
-                        new PlayerGoodInfo {
-                            //id = id,
-                            //futurePositions = new FuturePosition[] { },
-                            position = 0
-                        }
-                    }* /
-                }*/);
+                    playerPositions = default
+                };
+                bgi.playerPositions.Add(new PlayerGoodInfo()
+                {
+                    id = id,
+                    position = 0
+                });
+                Debug.Log($"Adding mygoodtype {mygoodtype}");
+                goods.Add(bgi);
             }
         }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        Debug.Log("I'm A BANK");
     }
 
     [ServerRpc]
@@ -138,13 +134,15 @@ public class bank : NetworkBehaviour
 
     public void BuyStock(GoodType type, ulong id, int inc)
     {
+        if (!IsServer) { return; }
+
         for (int i=0; i<goods.Count; i++)
         {
             var good = goods[i];
-            /*if (good.type == type)
+            if (good.type == type)
             {
                 var positions = good.playerPositions;
-                /*for (int j=0; j<positions.Length; j++)
+                for (int j = 0; j < positions.Length; j++)
                 {
                     var pos = positions[j];
                     if (pos.id == id)
@@ -157,8 +155,8 @@ public class bank : NetworkBehaviour
 
                         return;
                     }
-                }* /
-            }*/
+                }
+            }
         }
     }
 }
