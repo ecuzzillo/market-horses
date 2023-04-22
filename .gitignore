@@ -10,6 +10,7 @@ market-horses/[Bb]uilds/
 market-horses/[Ll]ogs/
 market-horses/[Mm]emoryCaptures/
 market-horses/.idea
+market-horses/UserSettings
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
