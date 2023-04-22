@@ -10,6 +10,19 @@ public class Player : NetworkBehaviour
     public NetworkObject idobj;
     bool added = false;
 
+    public static ulong LocalPlayerId()
+    {
+        foreach (var player in FindObjectsByType<Player>(FindObjectsSortMode.None))
+        {
+            if (player.IsOwner)
+            {
+                return player.id;
+            }
+        }
+        Debug.Log("Oh NOOOO");
+        return 0;
+    }
+
     // Start is called before the first frame update
     void Start()
     {

@@ -16,7 +16,7 @@ public class PlayerBankActions : MonoBehaviour
         player.gameObject.GetComponent<Player>().CmdBuyStock(type, id, 1);*/
     }
 
-    public void SellStock()
+    public void SellStock(GoodType goodType)
     {
         Debug.Log("Selling");
         Debug.Log("JOE WAS HERE");
