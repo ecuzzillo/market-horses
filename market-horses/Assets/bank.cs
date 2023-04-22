@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -14,28 +16,45 @@ public enum GoodType
     Watches
 }
 
-public class SyncListBankGoodInfo : List<BankGoodInfo>//: SyncListStruct<BankGoodInfo> { }
-{
-} 
+public class SyncListBankGoodInfo :  NetworkList<BankGoodInfo> { }
 
-public struct BankGoodInfo
+
+public struct BankGoodInfo : IEquatable<BankGoodInfo>
 {
     public GoodType type;
     public int inventory;
     public float price;
     public float futuresPrice;
-    public PlayerGoodInfo[] playerPositions;
+    public FixedList4096Bytes<PlayerGoodInfo> playerPositions;
+
+    public bool Equals(BankGoodInfo other)
+    {
+        return type == other.type &&
+               inventory == other.inventory &&
+               price.Equals(other.price) &&
+               futuresPrice.Equals(other.futuresPrice) &&
+               playerPositions.Equals(other.playerPositions);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is BankGoodInfo other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine((int)type, inventory, price, futuresPrice, playerPositions);
+    }
 }
 
-public class bank : MonoBehaviour//: NetworkBehaviour
+public class bank : NetworkBehaviour
 {
-    //[SyncVar]
-    public int health;
+    public NetworkVariable<int> health;
 
     public SyncListBankGoodInfo goods = new SyncListBankGoodInfo();
     public int counter;
-    /*public NetworkManager networkManager;
-    public NetworkInstanceId myID;*/
+    public NetworkManager networkManager;
+    /*public NetworkInstanceId myID;*/
     public GameObject playerPrefab;
     public static bank Instance;
 
@@ -46,30 +65,26 @@ public class bank : MonoBehaviour//: NetworkBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //networkManager.autoCreatePlayer = false;
+        //networkManager.au = false;
         /*networkManager.playerPrefab = playerPrefab;
         ClientScene.RegisterPrefab(playerPrefab);
         networkManager.spawnPrefabs.Add(playerPrefab);*/
-        //myID = GetComponent<NetworkIdentity>().netId;
+        //myID = GetComponent<NetworkObject>().netId;
         counter = 0;
 
     }
 
-    public void AddPlayerInfo()//NetworkInstanceId id)
+    public void AddPlayerInfo(ulong id)
     {
         if (goods.Count > 0)
         {
-            for (int i = 0; i < goods.Count; i++)
+            //this may or may not make sense anymore
+            /*for (int i = 0; i < goods.Count; i++)
             {
                 var good = goods[i];
-                good.playerPositions = good.playerPositions.Append(new PlayerGoodInfo
-                {
-                    //id = id,
-                    futurePositions = new FuturePosition[] { },
-                    position = 0
-                }).ToArray();
+                good.playerPositions = good.playerPositions.Append(default(PlayerGoodInfo)).ToArray();
                 goods[i] = good;
-            }
+            }*/
         }
         else
         {
@@ -81,22 +96,22 @@ public class bank : MonoBehaviour//: NetworkBehaviour
                     inventory = 100,
                     price = 12.0f,
                     futuresPrice = 2.0f,
-                    playerPositions = new[] {
+                    playerPositions = default/*new[] {
                         new PlayerGoodInfo {
                             //id = id,
-                            futurePositions = new FuturePosition[] { },
+                            //futurePositions = new FuturePosition[] { },
                             position = 0
                         }
-                    }
+                    }*/
                 });
             }
         }
     }
 
-    //[Command]
-    void CmdBuyGood(GoodType type, /*NetworkIdentity id, */int inc)
+    [ServerRpc]
+    void CmdBuyGoodServerRpc(GoodType type, NetworkObject id, int inc)
     {
-        //if (isServer)
+        if (IsServer)
         {
             for (int i = 0; i < goods.Count; i++)
             {
@@ -111,7 +126,7 @@ public class bank : MonoBehaviour//: NetworkBehaviour
         }
     }
 
-    public void BuyStock(GoodType type,/* NetworkInstanceId id,*/ int inc)
+    public void BuyStock(GoodType type, ulong id, int inc)
     {
         for (int i=0; i<goods.Count; i++)
         {
@@ -122,7 +137,7 @@ public class bank : MonoBehaviour//: NetworkBehaviour
                 for (int j=0; j<positions.Length; j++)
                 {
                     var pos = positions[j];
-                    //if (pos.id == id)
+                    if (pos.id == id)
                     {
                         // i have you now
                         pos.position += inc;

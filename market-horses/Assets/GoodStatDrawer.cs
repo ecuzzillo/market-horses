@@ -2,15 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public struct PlayerGoodInfo
 {
-    //public NetworkInstanceId id;
+    public ulong id;
     public int position;
-    public FuturePosition[] futurePositions;
+    //public FixedList4096Bytes<FuturePosition> futurePositions;
 }
 public struct FuturePosition
 {
@@ -78,7 +79,8 @@ public class GoodStatDrawer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (ClientScene.localPlayers.Count == 0 || bank.Instance.goods.Count == 0)
+        //these may or may not make sense
+        /*if (ClientScene.localPlayers.Count == 0 || bank.Instance.goods.Count == 0)
             return;
 
         foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
@@ -89,7 +91,7 @@ public class GoodStatDrawer : MonoBehaviour
             try
             {
                 /*playerGoodInfo = info.playerPositions.First(
-                    p => NetworkServer.FindLocalObject(p.id)?.GetComponent<NetworkIdentity>().hasAuthority ?? false);*/
+                    p => NetworkServer.FindLocalObject(p.id)?.GetComponent<NetworkIdentity>().hasAuthority ?? false);* /
             }
             catch (InvalidOperationException e)
             {
@@ -98,6 +100,6 @@ public class GoodStatDrawer : MonoBehaviour
             GoodPositionTexts[mygoodtype].GetComponent<Text>().text = playerGoodInfo.position.ToString();
             GoodInventoryTexts[mygoodtype].GetComponent<Text>().text = info.inventory.ToString();
             GoodPriceTexts[mygoodtype].GetComponent<Text>().text = info.price.ToString();
-        }
+        }*/
     }
 }
