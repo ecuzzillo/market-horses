@@ -116,6 +116,20 @@ public class bank : NetworkBehaviour
         Debug.Log("I'm A BANK");
     }
 
+    public PlayerGoodInfo GetPlayerGoodInfo(GoodType goodType, ulong playerId)
+    {
+        var good = goods[(int)goodType];
+        for (int i = 0; i < good.playerPositions.Length; i++)
+        {
+            if (good.playerPositions[i].id == playerId)
+            {
+                return good.playerPositions[i];
+            }
+        }
+
+        throw new Exception("Player position not found");
+    }
+
     [ServerRpc]
     void CmdBuyGoodServerRpc(GoodType type, ulong id, int inc)
     {

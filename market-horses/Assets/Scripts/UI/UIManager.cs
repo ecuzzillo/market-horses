@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.Multiplayer.Tools.NetStatsMonitor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -30,9 +31,9 @@ public class UIManager : MonoBehaviour
         }
 
         tradeSection.style.display = DisplayStyle.None;
-
-        document.rootVisualElement.Q("buy-button").RegisterCallback<ClickEvent>(OnTradeBuyClick);
-        document.rootVisualElement.Q("sell-button").RegisterCallback<ClickEvent>(OnTradeSellClick);
+        tradeSection.Q("exit-button").RegisterCallback<ClickEvent>(OnTradeExitClick);
+        tradeSection.Q("buy-button").RegisterCallback<ClickEvent>(OnTradeBuyClick);
+        tradeSection.Q("sell-button").RegisterCallback<ClickEvent>(OnTradeSellClick);
     }
 
     private void Update()
@@ -41,10 +42,11 @@ public class UIManager : MonoBehaviour
         {
             for (int i = 0; i < (int)GoodType.NumGoodType; i++)
             {
-                var goodPriceText = bank.Instance.goods[i].price.ToString();
-                ((GoodElement)document.rootVisualElement.Q("goods-list")[i]).goodPrice.text =
-                    goodPriceText;                
-
+                var bankGoodInfo = bank.Instance.goods[i];
+                var goodPriceText = bankGoodInfo.price.ToString();
+                var goodElement = ((GoodElement)document.rootVisualElement.Q("goods-list")[i]);
+                goodElement.goodPrice.text = goodPriceText;
+                goodElement.goodPosition.text = bank.Instance.GetPlayerGoodInfo((GoodType)i, Player.LocalPlayerId()).position.ToString();
             }
             document.rootVisualElement.Q<Label>("trade-price-label").text =
                 bank.Instance.goods[(int)goodToTrade].price.ToString();
@@ -61,10 +63,15 @@ public class UIManager : MonoBehaviour
 
     public void OnTradeBuyClick(ClickEvent evt)
     {
-        ShowMainView();
+        bank.Instance.BuyStockServerRpc(goodToTrade, Player.LocalPlayerId(), 1);
     }
 
     public void OnTradeSellClick(ClickEvent evt)
+    {
+        bank.Instance.SellStockServerRpc(goodToTrade, Player.LocalPlayerId(), 1);
+    }
+
+    public void OnTradeExitClick(ClickEvent evt)
     {
         ShowMainView();
     }

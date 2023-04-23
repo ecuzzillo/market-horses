@@ -10,6 +10,7 @@ public class GoodElement : VisualElement
     // TODO: Do we need to do this every time or can we cache it?
     public Label goodName => this.Q<Label>("good-name");
     public Label goodPrice => this.Q<Label>("good-price");
+    public Label goodPosition => this.Q<Label>("good-position");
     public Button tradeButton => this.Q<Button>("trade-button");
 
     // Custom controls need a default constructor. This default constructor 
@@ -25,6 +26,7 @@ public class GoodElement : VisualElement
 
         goodName.text = goodType.ToString();
         goodPrice.text = price.ToString();
+        goodPosition.text = "-1";
         tradeButton.RegisterCallback<ClickEvent>(OnTradeClick);
     }
 
