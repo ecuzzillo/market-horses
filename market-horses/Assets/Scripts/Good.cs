@@ -20,7 +20,7 @@ public class Good : MonoBehaviour
     public void BuyStock()
 	{
 		Debug.Log("Buying");
-		FindAnyObjectByType<bank>().BuyStock(goodType, Player.LocalPlayerId(), 1);
+		FindAnyObjectByType<bank>().BuyStockServerRpc(goodType, Player.LocalPlayerId(), 1);
     }
 }
 

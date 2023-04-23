@@ -16,11 +16,23 @@ public class SimpleRuntimeUI : MonoBehaviour
 
         _button = uiDocument.rootVisualElement.Q(className: "cows-trade-button") as Button;
         _button.RegisterCallback<ClickEvent>(CowsTradeButtonHandler);
+        
+        _button = uiDocument.rootVisualElement.Q(className: "cotton-trade-button") as Button;
+        _button.RegisterCallback<ClickEvent>(CottonTradeButtonHandler);
     }
 
     private void OnDisable()
     {
         _button.UnregisterCallback<ClickEvent>(CowsTradeButtonHandler);
+        _button.UnregisterCallback<ClickEvent>(CottonTradeButtonHandler);
+    }
+
+    public void CottonTradeButtonHandler(ClickEvent evt)
+    {
+        Debug.Log("wtf");
+        var bank = FindAnyObjectByType<bank>();
+        bank.BuyStockServerRpc(GoodType.Cotton, Player.LocalPlayerId(), 5);
+
     }
 
     public void CowsTradeButtonHandler(ClickEvent evt)

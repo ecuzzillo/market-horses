@@ -9,11 +9,10 @@ using UnityEngine.Networking;
 
 public enum GoodType
 {
-    Pigs,
-    Sheep,
-    Bricks,
-    Lightbulbs,
-    Watches
+    Cotton,
+    Oil,
+    Silk,
+    Cows
 }
 
 
@@ -122,20 +121,24 @@ public class bank : NetworkBehaviour
             for (int i = 0; i < goods.Count; i++)
             {
                 var good = goods[i];
-                /*if (good.type == type)
+                if (good.type == type)
                 {
-                   good.inventory += inc;
-                }*/
-                goods[i] = good;
-                break;
+                    good.inventory += inc;
+                    goods[i] = good;
+                    break;
+                }
             }
         }
     }
 
-    public void BuyStock(GoodType type, ulong id, int inc)
+
+
+    [ServerRpc]
+    public void BuyStockServerRpc(GoodType type, ulong id, int inc)
     {
         if (!IsServer) { return; }
 
+        Debug.Log($"Buying {inc} stock of {type}");
         for (int i=0; i<goods.Count; i++)
         {
             var good = goods[i];
@@ -151,6 +154,35 @@ public class bank : NetworkBehaviour
                         pos.position += inc;
                         positions[j] = pos;
                         good.inventory -= inc;
+                        good.price += inc;
+                        good.playerPositions = positions;
+                        goods[i] = good;
+                        return;
+                    }
+                }
+            }
+        }
+    }public void SellStockServerRpc(GoodType type, ulong id, int inc)
+    {
+        if (!IsServer) { return; }
+
+        Debug.Log($"Selling {inc} stock of {type}");
+        for (int i=0; i<goods.Count; i++)
+        {
+            var good = goods[i];
+            if (good.type == type)
+            {
+                var positions = good.playerPositions;
+                for (int j = 0; j < positions.Length; j++)
+                {
+                    var pos = positions[j];
+                    if (pos.id == id)
+                    {
+                        // i have you now
+                        pos.position -= inc;
+                        positions[j] = pos;
+                        good.inventory += inc;
+                        good.price -= inc;
                         good.playerPositions = positions;
                         goods[i] = good;
                         return;

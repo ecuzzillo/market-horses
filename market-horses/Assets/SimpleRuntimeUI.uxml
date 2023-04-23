@@ -49,7 +49,7 @@
             </ui:VisualElement>
             <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; align-items: center; justify-content: space-between;">
                 <ui:Label tabindex="-1" text="Cotton" display-tooltip-when-elided="true" />
-                <ui:Button text="Trade" display-tooltip-when-elided="true" style="-unity-text-align: middle-center;" />
+                <ui:Button text="Trade" display-tooltip-when-elided="true" class="cotton-trade-button" style="-unity-text-align: middle-center;" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

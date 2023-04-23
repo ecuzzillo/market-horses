@@ -14,7 +14,6 @@ public class AssetsDisplay : MonoBehaviour
 
     private int NetWorth = 0001;
     private int CashAvailable = 9999;
-    private int DayDisplay = 3;
     public Text NetWorthText;
     public Text CashAvailableText;
     public Text DayDisplayText;

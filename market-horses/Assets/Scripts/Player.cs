@@ -39,7 +39,7 @@ public class Player : NetworkBehaviour
             var bank = FindAnyObjectByType<bank>();
             var no = bank.GetComponent<NetworkObject>();
             Debug.Log($"IsSpawned: {no.IsSpawned}");
-            if (!bank.IsSpawned)
+            if (!no.IsSpawned)
             {
                 return;
             }
@@ -50,7 +50,7 @@ public class Player : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.K))
         {
             Debug.Log("K");
-            CmdBuyStockServerRpc(GoodType.Pigs, id, 1);
+            CmdBuyStockServerRpc(GoodType.Cotton, id, 1);
         }
         if (Input.GetKeyDown(KeyCode.J))
         {
@@ -76,6 +76,6 @@ public class Player : NetworkBehaviour
     [ServerRpc]
     public void CmdBuyStockServerRpc(GoodType type, ulong id, int inc)
     {
-        FindAnyObjectByType<bank>().BuyStock(type, id, inc);
+        FindAnyObjectByType<bank>().BuyStockServerRpc(type, id, inc);
     }
 }

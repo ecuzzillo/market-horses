@@ -19,7 +19,7 @@ public class HelloElliotScript : MonoBehaviour
         //get price of good here
         CurrentPriceOfGood.text = "12";
         
-        if (gameObject.active)
+        if (gameObject.activeSelf)
             gameObject.SetActive(false);
         else
             gameObject.SetActive(true);
@@ -34,7 +34,7 @@ public class HelloElliotScript : MonoBehaviour
 
 
         //gameObject.SetActive(false);
-        if (gameObject.active)
+        if (gameObject.activeSelf)
             gameObject.SetActive(false);
         else
             gameObject.SetActive(true);
@@ -47,7 +47,7 @@ public class HelloElliotScript : MonoBehaviour
         CurrentPriceOfGood.text = "19";
 
         //gameObject.SetActive(false);
-        if (gameObject.active)
+        if (gameObject.activeSelf)
             gameObject.SetActive(false);
         else
             gameObject.SetActive(true);
@@ -61,7 +61,7 @@ public class HelloElliotScript : MonoBehaviour
         //get price of good here
         CurrentPriceOfGood.text = "5";
         //gameObject.SetActive(false);
-        if (gameObject.active)
+        if (gameObject.activeSelf)
             gameObject.SetActive(false);
         else
             gameObject.SetActive(true);
