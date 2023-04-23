@@ -48,8 +48,10 @@ public class UIManager : MonoBehaviour
                 goodElement.goodPrice.text = goodPriceText;
                 goodElement.goodPosition.text = bank.Instance.GetPlayerGoodInfo((GoodType)i, Player.LocalPlayerId()).position.ToString();
             }
-            document.rootVisualElement.Q<Label>("trade-price-label").text =
+            tradeSection.Q<Label>("trade-price-label").text =
                 bank.Instance.goods[(int)goodToTrade].price.ToString();
+            tradeSection.Q<Label>("trade-position").text =
+                bank.Instance.GetPlayerGoodInfo(goodToTrade, Player.LocalPlayerId()).position.ToString();
         }
     }
 
