@@ -47,6 +47,7 @@ public struct BankGoodInfo : INetworkSerializeByMemcpy, IEquatable<BankGoodInfo>
 public class bank : NetworkBehaviour
 {
     public NetworkVariable<int> health;
+    public int PriceChangeAmount = 1;
 
     public NetworkList<BankGoodInfo> goods;
     public int counter;
@@ -150,13 +151,21 @@ public class bank : NetworkBehaviour
                     var pos = positions[j];
                     if (pos.id == id)
                     {
-                        // i have you now
-                        pos.position += inc;
-                        positions[j] = pos;
-                        good.inventory -= inc;
-                        good.price += inc;
-                        good.playerPositions = positions;
-                        goods[i] = good;
+                        for (int k = 0; k < inc; k++)
+                        {
+                            if (good.inventory > 0)
+                            {
+                                pos.position++;
+                                positions[j] = pos;
+                                good.inventory--;
+                                good.price += PriceChangeAmount;
+                                good.playerPositions = positions;
+                                goods[i] = good;
+                            }
+                            else
+                                return;
+                        }
+
                         return;
                     }
                 }
@@ -178,13 +187,21 @@ public class bank : NetworkBehaviour
                     var pos = positions[j];
                     if (pos.id == id)
                     {
-                        // i have you now
-                        pos.position -= inc;
-                        positions[j] = pos;
-                        good.inventory += inc;
-                        good.price -= inc;
-                        good.playerPositions = positions;
-                        goods[i] = good;
+                        for (int k = 0; k < inc; k++)
+                        {
+                            if (pos.position > 0)
+                            {
+                                pos.position--;
+                                positions[j] = pos;
+                                good.inventory++;
+                                good.price -= PriceChangeAmount;
+                                good.playerPositions = positions;
+                                goods[i] = good;
+                            }
+                            else
+                                return;
+                        }
+
                         return;
                     }
                 }
