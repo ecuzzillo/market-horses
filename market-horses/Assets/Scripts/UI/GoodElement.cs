@@ -32,6 +32,6 @@ public class GoodElement : VisualElement
 
     public void OnTradeClick(ClickEvent evt)
     {
-        UIManager.Instance.ShowTradeView(goodType);
+        //UIManager.Instance.ShowTradeView(goodType);
     }
 }

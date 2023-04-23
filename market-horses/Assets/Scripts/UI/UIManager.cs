@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Unity.Multiplayer.Tools.NetStatsMonitor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -14,6 +16,7 @@ public class UIManager : MonoBehaviour
     public GoodType goodToTrade;
 
     public static UIManager Instance;
+    public MultiColumnListView mclv;
 
     public void Start()
     {
@@ -24,31 +27,74 @@ public class UIManager : MonoBehaviour
         var asset = Resources.Load<VisualTreeAsset>("Main");
         asset.CloneTree(document.rootVisualElement);
 
-        for (int i=0; i<(int)GoodType.NumGoodType; i++)
+        tradeSection.style.display = DisplayStyle.None;
+        tradeSection.Q<Button>("exit-button").clicked += ShowMainView;
+        /*for (int i=0; i<(int)GoodType.NumGoodType; i++)
         {
             var goodElement = new GoodElement((GoodType)i);
             document.rootVisualElement.Q("goods-list").Add(goodElement);
-        }
+        }*/
+        mclv = document.rootVisualElement.Q<MultiColumnListView>("mclv");
+        mclv.columns.stretchMode = Columns.StretchMode.GrowAndFill;
+        mclv.columns["name"].makeCell = () => new Label();
+        mclv.columns["price"].makeCell = () => new Label();
+        mclv.columns["position"].makeCell = () => new Label();
+        mclv.columns["trade"].makeCell = () => new Button();
+                
+        mclv.columns["name"].bindCell = (VisualElement element, int index) =>
+            (element as Label).text = ((GoodType)index).ToString();
+        mclv.columns["price"].bindCell = (VisualElement element, int index) =>
+            (element as Label).text = bank.Instance.goods[index].price.ToString();
+        mclv.columns["position"].bindCell = (VisualElement element, int index) =>
+        {
+            var bgi = bank.Instance.goods[index];
 
-        tradeSection.style.display = DisplayStyle.None;
-        tradeSection.Q("exit-button").RegisterCallback<ClickEvent>(OnTradeExitClick);
-        tradeSection.Q("buy-button").RegisterCallback<ClickEvent>(OnTradeBuyClick);
-        tradeSection.Q("sell-button").RegisterCallback<ClickEvent>(OnTradeSellClick);
+            for (int i = 0; i < bgi.playerPositions.Length; i++)
+            {
+                if (bgi.playerPositions[i].id == Player.LocalPlayerId())
+                {
+                    (element as Label).text = bgi.playerPositions[i].position.ToString();
+                    return;
+                }
+            }
+        };
+        mclv.columns["trade"].bindCell = (element, index) =>
+        {
+            (element as Button).text = "Trade";
+            (element as Button).clicked -=
+                () => ShowTradeView((GoodType)index);
+            (element as Button).clicked +=
+                () => ShowTradeView((GoodType)index);
+        };
+        
+        
     }
 
+    public static bool refreshed = false;
     private void Update()
     {
 
         if (bank.Instance.IsSpawned && bank.Instance.goods.Count > 0)
         {
+            var shitlist = new List<BankGoodInfo>();
+                
             for (int i = 0; i < (int)GoodType.NumGoodType; i++)
             {
                 var bankGoodInfo = bank.Instance.goods[i];
                 var goodPriceText = bankGoodInfo.price.ToString();
-                var goodElement = ((GoodElement)document.rootVisualElement.Q("goods-list")[i]);
+                /*var goodElement = ((GoodElement)document.rootVisualElement.Q("goods-list")[i]);
                 goodElement.goodPrice.text = goodPriceText;
                 goodElement.goodPosition.text = bank.Instance.GetPlayerGoodInfo((GoodType)i, Player.LocalPlayerId())
-                    .position.ToString();
+                    .position.ToString();*/
+                shitlist.Add(bank.Instance.goods[i]);
+            }
+
+            if (!refreshed)
+            {
+                mclv.itemsSource = shitlist;
+
+                mclv.RefreshItems();
+                refreshed = true;
             }
 
             document.rootVisualElement.Q<Label>("trade-price-label").text =
@@ -85,8 +131,10 @@ public class UIManager : MonoBehaviour
 
     public void ShowMainView()
     {
+        Debug.Log("wtf 4");
         managersSection.style.display = DisplayStyle.Flex;
         goodsSection.style.display = DisplayStyle.Flex;
         tradeSection.style.display = DisplayStyle.None;
+        mclv.RefreshItems();
     }
 }

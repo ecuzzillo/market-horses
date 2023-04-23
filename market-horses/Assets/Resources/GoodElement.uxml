@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; align-items: center; justify-content: space-between;">
+    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; align-items: center; justify-content: space-around;">
         <ui:Label name="good-name" tabindex="-1" display-tooltip-when-elided="true" text="Name" />
         <ui:Label tabindex="-1" text="Price" display-tooltip-when-elided="true" name="good-price" />
         <ui:Label tabindex="-1" text="Position" display-tooltip-when-elided="true" name="good-position" />

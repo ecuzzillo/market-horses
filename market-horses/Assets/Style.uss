@@ -1,0 +1,8 @@
+* {
+    font-size: 14px;
+}
+
+MultiColumnListView#mclv {
+    display: flex;
+    font-size: 14px;
+}

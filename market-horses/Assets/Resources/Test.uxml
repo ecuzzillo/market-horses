@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: stretch; justify-content: flex-start; align-self: stretch;">
+        <ui:GroupBox style="height: 138px;">
+            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; justify-content: space-between;">
+                <ui:Label tabindex="-1" text="Looooong Text" display-tooltip-when-elided="true" style="position: relative; left: auto;" />
+                <ui:Label tabindex="-1" text="10" display-tooltip-when-elided="true" />
+                <ui:Button text="Button" display-tooltip-when-elided="true" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; justify-content: space-between;">
+                <ui:Label tabindex="-1" text=" Short" display-tooltip-when-elided="true" />
+                <ui:Label tabindex="-1" text="10" display-tooltip-when-elided="true" />
+                <ui:Button text="Button" display-tooltip-when-elided="true" />
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; justify-content: space-between;">
+                <ui:Label tabindex="-1" text="Medium Text" display-tooltip-when-elided="true" />
+                <ui:Label tabindex="-1" text="10" display-tooltip-when-elided="true" />
+                <ui:Button text="Button" display-tooltip-when-elided="true" />
+            </ui:VisualElement>
+        </ui:GroupBox>
+    </ui:VisualElement>
+</ui:UXML>
