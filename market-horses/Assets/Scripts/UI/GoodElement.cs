@@ -9,6 +9,7 @@ public class GoodElement : VisualElement
     public GoodType goodType;
     // TODO: Do we need to do this every time or can we cache it?
     public Label goodName => this.Q<Label>("good-name");
+    public Label goodPrice => this.Q<Label>("good-price");
     public Button tradeButton => this.Q<Button>("trade-button");
 
     // Custom controls need a default constructor. This default constructor 
@@ -18,10 +19,12 @@ public class GoodElement : VisualElement
     public GoodElement(GoodType goodType)
     {
         this.goodType = goodType;
+        var price = -1;//bank.Instance.goods[(int)goodType].price;
         var asset = Resources.Load<VisualTreeAsset>("GoodElement");
         asset.CloneTree(this);
 
         goodName.text = goodType.ToString();
+        goodPrice.text = price.ToString();
         tradeButton.RegisterCallback<ClickEvent>(OnTradeClick);
     }
 

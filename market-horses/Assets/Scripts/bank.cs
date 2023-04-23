@@ -12,7 +12,8 @@ public enum GoodType
     Cotton,
     Oil,
     Silk,
-    Cows
+    Cows,
+    NumGoodType
 }
 
 
@@ -88,11 +89,12 @@ public class bank : NetworkBehaviour
         }
         else
         {
-            foreach (var mygoodtype in (GoodType[])Enum.GetValues(typeof(GoodType)))
+            for (int i=0; i<(int)GoodType.NumGoodType; i++)
             {
+                var goodType = (GoodType)i;
                 var bgi = new BankGoodInfo()
                 {
-                    type = mygoodtype,
+                    type = goodType,
                     inventory = 100,
                     price = 12.0f,
                     futuresPrice = 2.0f,
@@ -103,7 +105,7 @@ public class bank : NetworkBehaviour
                     id = id,
                     position = 0
                 });
-                Debug.Log($"Adding mygoodtype {mygoodtype}");
+                Debug.Log($"Adding goodtype {goodType}");
                 goods.Add(bgi);
             }
         }
@@ -133,42 +135,39 @@ public class bank : NetworkBehaviour
     }
 
 
-
     [ServerRpc]
     public void BuyStockServerRpc(GoodType type, ulong id, int inc)
     {
-        if (!IsServer) { return; }
+        if (!IsServer)
+        {
+            return;
+        }
 
         Debug.Log($"Buying {inc} stock of {type}");
-        for (int i=0; i<goods.Count; i++)
+        var i = (int)type;
+        var good = goods[i];
+        var positions = good.playerPositions;
+        for (int j = 0; j < positions.Length; j++)
         {
-            var good = goods[i];
-            if (good.type == type)
+            var pos = positions[j];
+            if (pos.id == id)
             {
-                var positions = good.playerPositions;
-                for (int j = 0; j < positions.Length; j++)
+                for (int k = 0; k < inc; k++)
                 {
-                    var pos = positions[j];
-                    if (pos.id == id)
+                    if (good.inventory > 0)
                     {
-                        for (int k = 0; k < inc; k++)
-                        {
-                            if (good.inventory > 0)
-                            {
-                                pos.position++;
-                                positions[j] = pos;
-                                good.inventory--;
-                                good.price += PriceChangeAmount;
-                                good.playerPositions = positions;
-                                goods[i] = good;
-                            }
-                            else
-                                return;
-                        }
-
-                        return;
+                        pos.position++;
+                        positions[j] = pos;
+                        good.inventory--;
+                        good.price += PriceChangeAmount;
+                        good.playerPositions = positions;
+                        goods[i] = good;
                     }
+                    else
+                        return;
                 }
+
+                return;
             }
         }
     }
@@ -176,38 +175,38 @@ public class bank : NetworkBehaviour
     [ServerRpc]
     public void SellStockServerRpc(GoodType type, ulong id, int inc)
     {
-        if (!IsServer) { return; }
+        if (!IsServer)
+        {
+            return;
+        }
 
         Debug.Log($"Selling {inc} stock of {type}");
-        for (int i=0; i<goods.Count; i++)
-        {
-            var good = goods[i];
-            if (good.type == type)
-            {
-                var positions = good.playerPositions;
-                for (int j = 0; j < positions.Length; j++)
-                {
-                    var pos = positions[j];
-                    if (pos.id == id)
-                    {
-                        for (int k = 0; k < inc; k++)
-                        {
-                            if (pos.position > 0)
-                            {
-                                pos.position--;
-                                positions[j] = pos;
-                                good.inventory++;
-                                good.price -= PriceChangeAmount;
-                                good.playerPositions = positions;
-                                goods[i] = good;
-                            }
-                            else
-                                return;
-                        }
+        var i = (int)type;
 
-                        return;
+        var good = goods[i];
+
+        var positions = good.playerPositions;
+        for (int j = 0; j < positions.Length; j++)
+        {
+            var pos = positions[j];
+            if (pos.id == id)
+            {
+                for (int k = 0; k < inc; k++)
+                {
+                    if (pos.position > 0)
+                    {
+                        pos.position--;
+                        positions[j] = pos;
+                        good.inventory++;
+                        good.price -= PriceChangeAmount;
+                        good.playerPositions = positions;
+                        goods[i] = good;
                     }
+                    else
+                        return;
                 }
+
+                return;
             }
         }
     }

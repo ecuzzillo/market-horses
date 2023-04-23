@@ -37,8 +37,9 @@
             </ui:VisualElement>
             <ui:VisualElement name="goods-list" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);" />
         </ui:VisualElement>
-        <ui:VisualElement name="trade-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; justify-content: space-around; display: none;">
+        <ui:VisualElement name="trade-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; justify-content: space-around; display: flex;">
             <ui:Button text="Buy" display-tooltip-when-elided="true" name="buy-button" />
+            <ui:Label tabindex="-1" text="PriceGoesHere" display-tooltip-when-elided="true" name="trade-price-label" />
             <ui:Button text="Sell" display-tooltip-when-elided="true" name="sell-button" />
         </ui:VisualElement>
     </ui:VisualElement>

@@ -23,9 +23,9 @@ public class UIManager : MonoBehaviour
         var asset = Resources.Load<VisualTreeAsset>("Main");
         asset.CloneTree(document.rootVisualElement);
 
-        foreach (var goodType in (GoodType[]) Enum.GetValues(typeof(GoodType)))
+        for (int i=0; i<(int)GoodType.NumGoodType; i++)
         {
-            var goodElement = new GoodElement(goodType);
+            var goodElement = new GoodElement((GoodType)i);
             document.rootVisualElement.Q("goods-list").Add(goodElement);
         }
 
@@ -33,6 +33,22 @@ public class UIManager : MonoBehaviour
 
         document.rootVisualElement.Q("buy-button").RegisterCallback<ClickEvent>(OnTradeBuyClick);
         document.rootVisualElement.Q("sell-button").RegisterCallback<ClickEvent>(OnTradeSellClick);
+    }
+
+    private void Update()
+    {
+        if (bank.Instance.IsSpawned && bank.Instance.goods.Count > 0)
+        {
+            for (int i = 0; i < (int)GoodType.NumGoodType; i++)
+            {
+                var goodPriceText = bank.Instance.goods[i].price.ToString();
+                ((GoodElement)document.rootVisualElement.Q("goods-list")[i]).goodPrice.text =
+                    goodPriceText;                
+
+            }
+            document.rootVisualElement.Q<Label>("trade-price-label").text =
+                bank.Instance.goods[(int)goodToTrade].price.ToString();
+        }
     }
 
     public void ShowTradeView(GoodType goodType)
