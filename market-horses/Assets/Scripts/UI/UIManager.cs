@@ -55,6 +55,10 @@ public class UIManager : MonoBehaviour
                 document.rootVisualElement.Q<Label>("trade-price-label").text =
                     bank.Instance.goods[(int)goodToTrade].price.ToString();
             }
+            tradeSection.Q<Label>("trade-price-label").text =
+                bank.Instance.goods[(int)goodToTrade].price.ToString();
+            tradeSection.Q<Label>("trade-position").text =
+                bank.Instance.GetPlayerGoodInfo(goodToTrade, Player.LocalPlayerId()).position.ToString();
         }
         catch (Exception e)
         {
