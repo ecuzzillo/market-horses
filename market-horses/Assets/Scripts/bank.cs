@@ -171,7 +171,10 @@ public class bank : NetworkBehaviour
                 }
             }
         }
-    }public void SellStockServerRpc(GoodType type, ulong id, int inc)
+    }
+
+    [ServerRpc]
+    public void SellStockServerRpc(GoodType type, ulong id, int inc)
     {
         if (!IsServer) { return; }
 
