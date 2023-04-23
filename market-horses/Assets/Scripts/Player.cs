@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -21,6 +22,17 @@ public class Player : NetworkBehaviour
         }
         Debug.Log("Oh NOOOO");
         return 0;
+    }
+
+    public static Player LocalPlayer()
+    {
+        foreach (var player in FindObjectsByType<Player>(FindObjectsSortMode.None))
+        {
+            if (player.IsOwner)
+                return player;
+        }
+
+        throw new Exception("aw geez no player");
     }
 
     // Start is called before the first frame update
@@ -50,7 +62,7 @@ public class Player : NetworkBehaviour
         if (Input.GetKeyDown(KeyCode.K))
         {
             Debug.Log("K");
-            CmdBuyStockServerRpc(GoodType.Cotton, id, 1);
+            CmdBuyStockServerRpc(GoodType.Cotton, 1);
         }
         if (Input.GetKeyDown(KeyCode.J))
         {
@@ -74,8 +86,8 @@ public class Player : NetworkBehaviour
     }
 
     [ServerRpc]
-    public void CmdBuyStockServerRpc(GoodType type, ulong id, int inc)
+    public void CmdBuyStockServerRpc(GoodType type, int inc)
     {
-        FindAnyObjectByType<bank>().BuyStockServerRpc(type, id, inc);
+        bank.Instance.BuyStockServerRpc(type, id, inc);
     }
 }
