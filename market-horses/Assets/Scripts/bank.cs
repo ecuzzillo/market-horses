@@ -6,6 +6,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Networking;
+using Random = UnityEngine.Random;
 
 public enum GoodType
 {
@@ -16,6 +17,13 @@ public enum GoodType
     NumGoodType
 }
 
+public struct EventInfo
+{
+    public int quantity;
+    public int secondsFromStart;
+    public bool done;
+}
+
 
 public struct BankGoodInfo : INetworkSerializeByMemcpy, IEquatable<BankGoodInfo>
 {
@@ -23,7 +31,8 @@ public struct BankGoodInfo : INetworkSerializeByMemcpy, IEquatable<BankGoodInfo>
     public int inventory;
     public float price;
     public float futuresPrice;
-    public FixedList4096Bytes<PlayerGoodInfo> playerPositions;
+    public FixedList512Bytes<PlayerGoodInfo> playerPositions;
+    public FixedList512Bytes<EventInfo> eventsForThisGood;
 
     public bool Equals(BankGoodInfo other)
     {
@@ -45,6 +54,13 @@ public struct BankGoodInfo : INetworkSerializeByMemcpy, IEquatable<BankGoodInfo>
     }
 }
 
+public struct PlayerEventNotificationInfo
+{
+    public int notificationLeadTime;
+    public GoodType goodType;
+    public int eventIdx;
+}
+
 public class bank : NetworkBehaviour
 {
     public NetworkVariable<int> health;
@@ -57,8 +73,14 @@ public class bank : NetworkBehaviour
     public GameObject playerPrefab;
     public static bank Instance;
 
+    public float gameStart;
+    public float probabilityOfTellingPlayerAboutAGivenEvent;
+    public Dictionary<ulong, List<PlayerEventNotificationInfo>> pings =
+        new Dictionary<ulong, List<PlayerEventNotificationInfo>>();
+
     public bank()
     {
+        gameStart = -1;
         Instance = this;
     }
 
@@ -105,9 +127,126 @@ public class bank : NetworkBehaviour
                     id = id,
                     position = 0
                 });
-                Debug.Log($"Adding goodtype {goodType}");
                 goods.Add(bgi);
             }
+
+            for (int i = 0; i < 20; i++)
+            {
+                var myevent = new EventInfo();
+                var type = UnityEngine.Random.Range(0, ((int)GoodType.NumGoodType - 1));
+                myevent.quantity = Random.Range(-100, 100);
+                myevent.secondsFromStart = Random.Range(0, 120);
+                var tmp = goods[type];
+                tmp.eventsForThisGood.Add(myevent);
+                goods[type] = tmp;
+            }
+            
+        }
+    }
+
+    private void Update()
+    {
+        if (goods.Count == 0) return;
+        
+        var time = Time.time;
+        for (int i=0; i<(int)GoodType.NumGoodType; i++)
+        {
+            var events = goods[i].eventsForThisGood;
+            for (int j = 0; j < events.Length; j++)
+            {
+                var eventInfo = events[j];
+                if (!eventInfo.done && eventInfo.secondsFromStart < time)
+                {
+                    //do the thing
+                    var bankGoodInfo = goods[i];
+
+                    var newInventory = bankGoodInfo.inventory + eventInfo.quantity;
+                    if (newInventory < 0)
+                    {
+                        bankGoodInfo.price += bankGoodInfo.inventory;
+                        bankGoodInfo.inventory = 0;
+                    }
+                    else
+                    {
+                        bankGoodInfo.inventory = newInventory;
+                        //1 is not correct, it should be asymptotic something mumble
+                        bankGoodInfo.price = Mathf.Max(1, bankGoodInfo.price - eventInfo.quantity);
+                    }
+
+                    goods[i] = bankGoodInfo;
+                    eventInfo.done = true;
+                    Debug.Log($"Just handled event {i} {j}");
+                }
+
+                events[j] = eventInfo;
+            }
+
+            var tmp = goods[i];
+            tmp.eventsForThisGood = events;
+            goods[i] = tmp;
+        }
+
+        if (IsOwner)
+        {
+            if (Input.GetKeyDown(KeyCode.G) && gameStart < 0)
+            {
+                Debug.Log("G!");
+                gameStart = Time.time;
+
+                var playerids = new List<ulong>();
+
+                for (int i = 0; i < goods[0].playerPositions.Length; i++)
+                {
+                    playerids.Add(goods[0].playerPositions[i].id);
+                }
+                
+                foreach (var id in playerids)
+                {
+                    pings[id] = new List<PlayerEventNotificationInfo>();
+                }
+
+                for (int i = 0; i < (int)GoodType.NumGoodType; i++)
+                {
+                    var events = goods[i].eventsForThisGood;
+                    for (int j = 0; j < events.Length; j++)
+                    {
+                        foreach (var id in playerids)
+                        {
+                            var thing = Random.Range(0f, 1f);
+                            if (thing < probabilityOfTellingPlayerAboutAGivenEvent)
+                            {
+                                Debug.Log($"added thing {i} {j}");
+                                pings[id]
+                                    .Add(new PlayerEventNotificationInfo()
+                                    {
+                                        eventIdx = j,
+                                        goodType = (GoodType)i,
+                                        notificationLeadTime = Random.Range(5, 60)
+                                    });
+                            }
+                        }
+                    }
+                }
+            }
+            else if (gameStart > 0)
+            {
+                var timeSinceStartAsOfnow = Time.time - gameStart;
+                foreach (var (k, v) in pings)
+                {
+                    for (int i = v.Count - 1; i >= 0; i--)
+                    {
+                        var entry = v[i];
+                        var eventInfo = goods[(int)entry.goodType].eventsForThisGood[entry.eventIdx];
+                        if (eventInfo.secondsFromStart - entry.notificationLeadTime < timeSinceStartAsOfnow)
+                        {
+                            Debug.Log("trying to notify???");
+                            UIManager.Instance.GetEventPingClientRpc(k, entry.goodType, eventInfo);
+                        }
+
+                    }
+                }
+            }
+
         }
     }
 

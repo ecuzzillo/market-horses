@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -565,10 +565,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health:
     m_InternalValue: 0
+  PriceChangeAmount: 1
   counter: 0
   networkManager: {fileID: 128620026}
   myID: 0
   playerPrefab: {fileID: 0}
+  gameStart: -1
+  probabilityOfTellingPlayerAboutAGivenEvent: 0.5
 --- !u!1 &5186279430621136993
 GameObject:
   m_ObjectHideFlags: 0

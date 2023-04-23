@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Multiplayer.Tools.NetStatsMonitor;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -76,6 +77,15 @@ public class UIManager : MonoBehaviour
         };
         
         
+    }
+
+    [ClientRpc]
+    public void GetEventPingClientRpc(ulong playerId, GoodType goodType, EventInfo e)
+    {
+        if (playerId == Player.LocalPlayerId())
+        {
+            Debug.Log("we should notify this player about this event, man!");
+        }
     }
 
     private void Update()
