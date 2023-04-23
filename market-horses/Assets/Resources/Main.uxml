@@ -42,6 +42,7 @@
                         <ui:Column name="name" title="Name" stretchable="true" />
                        <ui:Column name="price" title="Price" stretchable="true" />
                         <ui:Column name="position" title="Your Position" stretchable="true" />
+			<ui:Column name="supply" title="Supply" stretchable="true" />
                         <ui:Column name="trade" stretchable="true" />
                     </ui:Columns>
                 </ui:MultiColumnListView>

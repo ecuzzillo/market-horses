@@ -28,7 +28,10 @@ public class UIManager : MonoBehaviour
         asset.CloneTree(document.rootVisualElement);
 
         tradeSection.style.display = DisplayStyle.None;
-        tradeSection.Q<Button>("exit-button").clicked += ShowMainView;
+        tradeSection.Q<Button>("exit-button").RegisterCallback<ClickEvent>(OnTradeExitClick);
+        tradeSection.Q<Button>("buy-button").RegisterCallback<ClickEvent>(OnTradeBuyClick);
+        tradeSection.Q<Button>("sell-button").RegisterCallback<ClickEvent>(OnTradeSellClick);
+
         /*for (int i=0; i<(int)GoodType.NumGoodType; i++)
         {
             var goodElement = new GoodElement((GoodType)i);
@@ -39,13 +42,14 @@ public class UIManager : MonoBehaviour
         mclv.columns["name"].makeCell = () => new Label();
         mclv.columns["price"].makeCell = () => new Label();
         mclv.columns["position"].makeCell = () => new Label();
+        mclv.columns["supply"].makeCell = () => new Label();
         mclv.columns["trade"].makeCell = () => new Button();
                 
-        mclv.columns["name"].bindCell = (VisualElement element, int index) =>
+        mclv.columns["name"].bindCell = (element, index) =>
             (element as Label).text = ((GoodType)index).ToString();
-        mclv.columns["price"].bindCell = (VisualElement element, int index) =>
+        mclv.columns["price"].bindCell = (element, index) =>
             (element as Label).text = bank.Instance.goods[index].price.ToString();
-        mclv.columns["position"].bindCell = (VisualElement element, int index) =>
+        mclv.columns["position"].bindCell = (element, index) =>
         {
             var bgi = bank.Instance.goods[index];
 
@@ -57,6 +61,10 @@ public class UIManager : MonoBehaviour
                     return;
                 }
             }
+        };
+        mclv.columns["supply"].bindCell = (element, index) =>
+        {
+            (element as Label).text = bank.Instance.goods[index].inventory.ToString();
         };
         mclv.columns["trade"].bindCell = (element, index) =>
         {
@@ -70,7 +78,6 @@ public class UIManager : MonoBehaviour
         
     }
 
-    public static bool refreshed = false;
     private void Update()
     {
 
@@ -89,13 +96,8 @@ public class UIManager : MonoBehaviour
                 shitlist.Add(bank.Instance.goods[i]);
             }
 
-            if (!refreshed)
-            {
-                mclv.itemsSource = shitlist;
-
-                mclv.RefreshItems();
-                refreshed = true;
-            }
+            mclv.itemsSource = shitlist;
+            mclv.RefreshItems();
 
             document.rootVisualElement.Q<Label>("trade-price-label").text =
                 bank.Instance.goods[(int)goodToTrade].price.ToString();
