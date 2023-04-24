@@ -3,11 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Multiplayer.Tools.NetStatsMonitor;
 using Unity.Netcode;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+
+public struct VisualEventInfo
+{
+    public GoodType type;
+    public EventInfo info;
+    public float ReceivedTime;
+}
 public class UIManager : MonoBehaviour
 {
+    public static UIManager Instance;
+    
     public UIDocument document;
     public VisualElement tickerSection => document.rootVisualElement.Q("ticker-section");
     public VisualElement managersSection => document.rootVisualElement.Q("managers-section");
@@ -16,12 +26,18 @@ public class UIManager : MonoBehaviour
 
     public GoodType goodToTrade;
 
-    public static UIManager Instance;
+    
+    public ListView tickerView;
+    public List<VisualEventInfo> events;
+
     public MultiColumnListView mclv;
+
 
     public void Start()
     {
         Instance = this;
+
+        events = new List<VisualEventInfo>();
 
         document = GetComponent<UIDocument>();
 
@@ -33,11 +49,17 @@ public class UIManager : MonoBehaviour
         tradeSection.Q<Button>("buy-button").RegisterCallback<ClickEvent>(OnTradeBuyClick);
         tradeSection.Q<Button>("sell-button").RegisterCallback<ClickEvent>(OnTradeSellClick);
 
-        /*for (int i=0; i<(int)GoodType.NumGoodType; i++)
+
+        tickerView = document.rootVisualElement.Q<ListView>("ticker-list");
+        tickerView.makeItem = () => new Label();
+        tickerView.bindItem = (element, i) =>
         {
-            var goodElement = new GoodElement((GoodType)i);
-            document.rootVisualElement.Q("goods-list").Add(goodElement);
-        }*/
+            var myevent = events[i];
+            Debug.Log($"you bet your bottom krone {element} {i}");
+            (element as Label).text = $"{myevent.ReceivedTime} at time {myevent.info.secondsFromStart}, {myevent.info.quantity} units of {myevent.type} will be transacted!";
+        };
+        tickerView.itemsSource = events;
+        
         mclv = document.rootVisualElement.Q<MultiColumnListView>("mclv");
         mclv.columns.stretchMode = Columns.StretchMode.GrowAndFill;
         mclv.columns["name"].makeCell = () => new Label();
@@ -82,9 +104,16 @@ public class UIManager : MonoBehaviour
     [ClientRpc]
     public void GetEventPingClientRpc(ulong playerId, GoodType goodType, EventInfo e)
     {
-        if (playerId == Player.LocalPlayerId())
+        var localPlayerId = Player.LocalPlayerId();
+        if (playerId == localPlayerId)
         {
-            Debug.Log("we should notify this player about this event, man!");
+            Debug.Log($"added event with receivedtime {Time.time} to list!");
+            events.Add(new VisualEventInfo { info = e, ReceivedTime = Time.time, type = goodType });
+            tickerView.RefreshItems();
+        }
+        else
+        {
+            Debug.Log($"wanted id {playerId} but got {localPlayerId}");
         }
     }
 

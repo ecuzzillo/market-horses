@@ -239,12 +239,17 @@ public class bank : NetworkBehaviour
                         var eventInfo = goods[(int)entry.goodType].eventsForThisGood[entry.eventIdx];
                         if (eventInfo.secondsFromStart - entry.notificationLeadTime < timeSinceStartAsOfnow)
                         {
-                            Debug.Log("trying to notify???");
+                            Debug.Log($"trying to notify??? about event {entry.goodType} {eventInfo.quantity} for player {k}");
                             UIManager.Instance.GetEventPingClientRpc(k, entry.goodType, eventInfo);
+                            v.RemoveAt(i);
                         }
 
                     }
                 }
+            }
+            else
+            {
+                Debug.Log($"gamestart was {gameStart} so fuck off");
             }
 
         }

@@ -1,36 +1,18 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Style.uss?fileID=7433441132597879392&amp;guid=66ce8e2964a884904999f9b2a36e87d4&amp;type=3#Style" />
+    <Style src="project://database/Assets/Style%201.uss?fileID=7433441132597879392&amp;guid=b233aca8c34a6a24089b778c7f429a24&amp;type=3#Style 1" />
     <ui:VisualElement style="flex-grow: 1; background-color: rgba(255, 255, 255, 0);">
         <ui:VisualElement name="ticker-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
             <ui:VisualElement name="ticker-header" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: column;">
                 <ui:Label text="News Ticker" display-tooltip-when-elided="true" style="align-items: auto; -unity-text-align: upper-center;" />
             </ui:VisualElement>
-            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
-                <ui:Label tabindex="-1" text="Bobby is great" display-tooltip-when-elided="true" />
-            </ui:VisualElement>
-            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
-                <ui:Label tabindex="-1" text="Chris is slow" display-tooltip-when-elided="true" name="Label" />
-            </ui:VisualElement>
-            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
-                <ui:Label tabindex="-1" text="More news at 11" display-tooltip-when-elided="true" />
-            </ui:VisualElement>
+            <ui:ListView focusable="true" name="ticker-list" />
         </ui:VisualElement>
         <ui:VisualElement name="managers-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
             <ui:VisualElement name="managers-header" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
                 <ui:Label tabindex="-1" text="Fund Managers" display-tooltip-when-elided="true" style="-unity-text-align: upper-center;" />
             </ui:VisualElement>
-            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
-                <ui:Label tabindex="-1" text="Player 1" display-tooltip-when-elided="true" />
-            </ui:VisualElement>
-            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
-                <ui:Label tabindex="-1" text="Player 2" display-tooltip-when-elided="true" />
-            </ui:VisualElement>
-            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
-                <ui:Label tabindex="-1" text="Player 3" display-tooltip-when-elided="true" />
-            </ui:VisualElement>
-            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
-                <ui:Label tabindex="-1" text="Player 4" display-tooltip-when-elided="true" />
-            </ui:VisualElement>
+            <ui:DropdownField label="Dropdown" index="-1" choices="System.Collections.Generic.List`1[System.String]" name="my-dropdown" />
         </ui:VisualElement>
         <ui:VisualElement name="goods-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
             <ui:VisualElement name="goods-header" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); justify-content: space-around;">
@@ -40,9 +22,9 @@
                 <ui:MultiColumnListView name="mclv" fixed-item-height="40" style="flex-direction: row; justify-content: space-between;">
                     <ui:Columns>
                         <ui:Column name="name" title="Name" stretchable="true" />
-                       <ui:Column name="price" title="Price" stretchable="true" />
+                        <ui:Column name="price" title="Price" stretchable="true" />
                         <ui:Column name="position" title="Your Position" stretchable="true" />
-			<ui:Column name="supply" title="Supply" stretchable="true" />
+                        <ui:Column name="supply" title="Supply" stretchable="true" />
                         <ui:Column name="trade" stretchable="true" />
                     </ui:Columns>
                 </ui:MultiColumnListView>
