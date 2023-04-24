@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -163,7 +163,7 @@ MonoBehaviour:
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777
-    ServerListenAddress: 
+    ServerListenAddress: 127.0.0.1
   DebugSimulator:
     PacketDelayMS: 0
     PacketJitterMS: 0
@@ -187,7 +187,8 @@ MonoBehaviour:
     NetworkTransport: {fileID: 128620025}
     PlayerPrefab: {fileID: 8138258720749824192, guid: 150c4f44c7b84b841be6fd68c611227b,
       type: 3}
-    NetworkPrefabs: []
+    Prefabs:
+      NetworkPrefabsLists: []
     TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 0
@@ -203,6 +204,7 @@ MonoBehaviour:
     LoadSceneTimeOut: 120
     SpawnTimeout: 1
     EnableNetworkLogs: 1
+    OldPrefabList: []
 --- !u!4 &128620027
 Transform:
   m_ObjectHideFlags: 0
@@ -571,7 +573,7 @@ MonoBehaviour:
   myID: 0
   playerPrefab: {fileID: 0}
   gameStart: -1
-  probabilityOfTellingPlayerAboutAGivenEvent: 0.5
+  probabilityOfTellingPlayerAboutAGivenEvent: 0.95
 --- !u!1 &5186279430621136993
 GameObject:
   m_ObjectHideFlags: 0
