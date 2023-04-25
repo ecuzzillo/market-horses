@@ -131,6 +131,7 @@ public class bank : NetworkBehaviour
                 });
                 goods.Add(bgi);
             }
+            UIManager.Instance.mclv.RefreshItems();
 
             for (int i = 0; i < 20; i++)
             {

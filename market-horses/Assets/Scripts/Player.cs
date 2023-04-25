@@ -35,14 +35,12 @@ public class Player : NetworkBehaviour
         throw new Exception("aw geez no player");
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         idobj = GetComponent<NetworkObject>();
         id = idobj.NetworkObjectId;
     }
 
-    // Update is called once per frame
     void Update()
     { 
         if (idobj.IsOwner && !added)
@@ -58,18 +56,6 @@ public class Player : NetworkBehaviour
             added = true;
             CmdAddPlayerInfoServerRpc();
         }
-
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            Debug.Log("K");
-            CmdBuyStockServerRpc(GoodType.Cotton, 1);
-        }
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            Debug.Log("J");
-            var bank = FindAnyObjectByType<bank>();
-            Debug.Log("Position: " + bank.goods[0].playerPositions[0].position);
-        }
     }
 
     public override void OnNetworkSpawn()
@@ -82,7 +68,7 @@ public class Player : NetworkBehaviour
     void CmdAddPlayerInfoServerRpc()
     {
         Debug.Log("trying to add player info for " + id);
-        FindAnyObjectByType<bank>().AddPlayerInfo(id, "player name here");
+        FindAnyObjectByType<bank>().AddPlayerInfo(id, UIManager.Instance.localPlayerName);
     }
 
     [ServerRpc]

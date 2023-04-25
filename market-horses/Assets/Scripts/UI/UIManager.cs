@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Unity.Multiplayer.Tools.NetStatsMonitor;
+﻿using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEditor.UIElements;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,12 +16,15 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
     
     public UIDocument document;
-    public VisualElement tickerSection => document.rootVisualElement.Q("ticker-section");
-    public VisualElement managersSection => document.rootVisualElement.Q("managers-section");
-    public VisualElement goodsSection => document.rootVisualElement.Q("goods-section");
-    public VisualElement tradeSection => document.rootVisualElement.Q("trade-section");
+    public NetworkManager networkManager;
+    public string localPlayerName;
+    public VisualElement tickerSection;
+    public VisualElement managersSection;
+    public VisualElement goodsSection;
+    public VisualElement tradeSection;
+    public VisualElement gameScreen;
 
-    public VisualElement startScreen => document.rootVisualElement.Q("start-screen");
+    public VisualElement startScreen;
 
     public GoodType goodToTrade;
 
@@ -34,6 +34,7 @@ public class UIManager : MonoBehaviour
 
     public MultiColumnListView playerListView;
     public MultiColumnListView mclv;
+    
 
     public void Start()
     {
@@ -43,19 +44,27 @@ public class UIManager : MonoBehaviour
 
         document = GetComponent<UIDocument>();
 
-        var asset = Resources.Load<VisualTreeAsset>("Main");
-        asset.CloneTree(document.rootVisualElement);
+        tickerSection = document.rootVisualElement.Q("ticker-section");
+        managersSection = document.rootVisualElement.Q("managers-section");
+        goodsSection = document.rootVisualElement.Q("goods-section");
+        tradeSection = document.rootVisualElement.Q("trade-section");
+        startScreen = document.rootVisualElement.Q("start-screen");
+        gameScreen = document.rootVisualElement.Q("game-screen");
+
+        /*var asset = Resources.Load<VisualTreeAsset>("Main");
+        asset.CloneTree(document.rootVisualElement);*/
 
         startScreen.style.display = DisplayStyle.Flex;
         startScreen.Q<Button>("join-game-button").RegisterCallback<ClickEvent>(OnJoinGameClick);
+        startScreen.Q<Button>("host-game-button").RegisterCallback<ClickEvent>(OnHostGameClick);
         
         tradeSection.style.display = DisplayStyle.None;
         tradeSection.Q<Button>("exit-button").RegisterCallback<ClickEvent>(OnTradeExitClick);
         tradeSection.Q<Button>("buy-button").RegisterCallback<ClickEvent>(OnTradeBuyClick);
         tradeSection.Q<Button>("sell-button").RegisterCallback<ClickEvent>(OnTradeSellClick);
 
-        tickerView.style.display = DisplayStyle.None;
         tickerView = document.rootVisualElement.Q<ListView>("ticker-list");
+        tickerView.style.display = DisplayStyle.None;
         tickerView.makeItem = () => new Label();
         tickerView.bindItem = (element, i) =>
         {
@@ -65,8 +74,8 @@ public class UIManager : MonoBehaviour
         };
         tickerView.itemsSource = events;
 
-        playerListView.style.display = DisplayStyle.None;
         playerListView = document.rootVisualElement.Q<MultiColumnListView>("player-list");
+        playerListView.style.display = DisplayStyle.None;
         playerListView.columns.stretchMode = Columns.StretchMode.GrowAndFill;
         playerListView.columns["name"].makeCell = () => new Label();
         playerListView.columns["networth"].makeCell = () => new Label();
@@ -78,8 +87,9 @@ public class UIManager : MonoBehaviour
         playerListView.columns["networth"].bindCell = (element, i) => new Label();
 
 
-        mclv.style.display = DisplayStyle.None;
         mclv = document.rootVisualElement.Q<MultiColumnListView>("mclv");
+        mclv.style.display = DisplayStyle.None;
+
         mclv.columns.stretchMode = Columns.StretchMode.GrowAndFill;
         mclv.columns["name"].makeCell = () => new Label();
         mclv.columns["price"].makeCell = () => new Label();
@@ -145,12 +155,6 @@ public class UIManager : MonoBehaviour
                 
             for (int i = 0; i < (int)GoodType.NumGoodType; i++)
             {
-                var bankGoodInfo = bank.Instance.goods[i];
-                var goodPriceText = bankGoodInfo.price.ToString();
-                /*var goodElement = ((GoodElement)document.rootVisualElement.Q("goods-list")[i]);
-                goodElement.goodPrice.text = goodPriceText;
-                goodElement.goodPosition.text = bank.Instance.GetPlayerGoodInfo((GoodType)i, Player.LocalPlayerId())
-                    .position.ToString();*/
                 shitlist.Add(bank.Instance.goods[i]);
             }
 
@@ -176,7 +180,39 @@ public class UIManager : MonoBehaviour
 
     public void OnJoinGameClick(ClickEvent evt)
     {
-        Debug.Log("add player info should happen now! and make start screen go away, and make other screens come up");
+        //slurp ip to connect to from text box
+        //slurp name from other text box
+        //call addplayerinfo
+        var ip = startScreen.Q<TextField>("ip-address-field").value;
+        localPlayerName = startScreen.Q<TextField>("name-field").value;
+
+        networkManager.GetComponent<UnityTransport>().ConnectionData.Address = ip;
+        networkManager.StartClient();
+
+        ExitStartScreen();
+
+    }
+    
+    public void OnHostGameClick(ClickEvent evt)
+    {
+        //slurp ip to connect to from text box
+        //slurp name from other text box
+        //call addplayerinfo
+        localPlayerName = startScreen.Q<TextField>("name-field").value;
+
+        networkManager.StartHost();
+
+        ExitStartScreen();
+
+    }
+
+    private void ExitStartScreen()
+    {
+        startScreen.style.display = DisplayStyle.None;
+        tickerView.style.display = DisplayStyle.Flex;
+        managersSection.style.display = DisplayStyle.Flex;
+        goodsSection.style.display = DisplayStyle.Flex;
+        gameScreen.style.display = DisplayStyle.Flex;
     }
 
     public void OnTradeBuyClick(ClickEvent evt)
