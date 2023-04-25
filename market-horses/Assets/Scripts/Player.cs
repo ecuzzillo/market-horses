@@ -82,7 +82,7 @@ public class Player : NetworkBehaviour
     void CmdAddPlayerInfoServerRpc()
     {
         Debug.Log("trying to add player info for " + id);
-        FindAnyObjectByType<bank>().AddPlayerInfo(id);
+        FindAnyObjectByType<bank>().AddPlayerInfo(id, "player name here");
     }
 
     [ServerRpc]

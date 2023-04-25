@@ -67,6 +67,7 @@ public class bank : NetworkBehaviour
     public int PriceChangeAmount = 1;
 
     public NetworkList<BankGoodInfo> goods;
+    public NetworkList<FixedString128Bytes> playerNames;
     public int counter;
     public NetworkManager networkManager;
     public ulong myID;
@@ -87,11 +88,12 @@ public class bank : NetworkBehaviour
     void Start()
     {
         goods = new NetworkList<BankGoodInfo>();
+        playerNames = new NetworkList<FixedString128Bytes>();
         myID = GetComponent<NetworkObject>().NetworkObjectId;
         counter = 0;
     }
 
-    public void AddPlayerInfo(ulong id)
+    public void AddPlayerInfo(ulong id, string playername)
     {
         Debug.Log($"Server: {IsServer} -- Host: {IsHost} -- Client: {IsClient}");
         if (!IsHost) { Debug.Log("WE NOT SERVER NOW");  return; }
@@ -140,8 +142,10 @@ public class bank : NetworkBehaviour
                 tmp.eventsForThisGood.Add(myevent);
                 goods[type] = tmp;
             }
-            
         }
+        
+        playerNames.Add(playername);
+        
     }
 
     private void Update()

@@ -24,14 +24,16 @@ public class UIManager : MonoBehaviour
     public VisualElement goodsSection => document.rootVisualElement.Q("goods-section");
     public VisualElement tradeSection => document.rootVisualElement.Q("trade-section");
 
+    public VisualElement startScreen => document.rootVisualElement.Q("start-screen");
+
     public GoodType goodToTrade;
 
     
     public ListView tickerView;
     public List<VisualEventInfo> events;
 
+    public MultiColumnListView playerListView;
     public MultiColumnListView mclv;
-
 
     public void Start()
     {
@@ -44,12 +46,15 @@ public class UIManager : MonoBehaviour
         var asset = Resources.Load<VisualTreeAsset>("Main");
         asset.CloneTree(document.rootVisualElement);
 
+        startScreen.style.display = DisplayStyle.Flex;
+        startScreen.Q<Button>("join-game-button").RegisterCallback<ClickEvent>(OnJoinGameClick);
+        
         tradeSection.style.display = DisplayStyle.None;
         tradeSection.Q<Button>("exit-button").RegisterCallback<ClickEvent>(OnTradeExitClick);
         tradeSection.Q<Button>("buy-button").RegisterCallback<ClickEvent>(OnTradeBuyClick);
         tradeSection.Q<Button>("sell-button").RegisterCallback<ClickEvent>(OnTradeSellClick);
 
-
+        tickerView.style.display = DisplayStyle.None;
         tickerView = document.rootVisualElement.Q<ListView>("ticker-list");
         tickerView.makeItem = () => new Label();
         tickerView.bindItem = (element, i) =>
@@ -59,7 +64,21 @@ public class UIManager : MonoBehaviour
             (element as Label).text = $"{myevent.ReceivedTime} at time {myevent.info.secondsFromStart}, {myevent.info.quantity} units of {myevent.type} will be transacted!";
         };
         tickerView.itemsSource = events;
+
+        playerListView.style.display = DisplayStyle.None;
+        playerListView = document.rootVisualElement.Q<MultiColumnListView>("player-list");
+        playerListView.columns.stretchMode = Columns.StretchMode.GrowAndFill;
+        playerListView.columns["name"].makeCell = () => new Label();
+        playerListView.columns["networth"].makeCell = () => new Label();
         
+        playerListView.columns["name"].bindCell = (element, i) =>
+        {
+            (element as Label).text = "howdy fix me";
+        };
+        playerListView.columns["networth"].bindCell = (element, i) => new Label();
+
+
+        mclv.style.display = DisplayStyle.None;
         mclv = document.rootVisualElement.Q<MultiColumnListView>("mclv");
         mclv.columns.stretchMode = Columns.StretchMode.GrowAndFill;
         mclv.columns["name"].makeCell = () => new Label();
@@ -153,6 +172,11 @@ public class UIManager : MonoBehaviour
         managersSection.style.display = DisplayStyle.None;
         goodsSection.style.display = DisplayStyle.None;
         tradeSection.style.display = DisplayStyle.Flex;
+    }
+
+    public void OnJoinGameClick(ClickEvent evt)
+    {
+        Debug.Log("add player info should happen now! and make start screen go away, and make other screens come up");
     }
 
     public void OnTradeBuyClick(ClickEvent evt)
