@@ -64,7 +64,6 @@ public class UIManager : MonoBehaviour
         tradeSection.Q<Button>("sell-button").RegisterCallback<ClickEvent>(OnTradeSellClick);
 
         tickerView = document.rootVisualElement.Q<ListView>("ticker-list");
-        tickerView.style.display = DisplayStyle.None;
         tickerView.makeItem = () => new Label();
         tickerView.bindItem = (element, i) =>
         {
@@ -75,20 +74,22 @@ public class UIManager : MonoBehaviour
         tickerView.itemsSource = events;
 
         playerListView = document.rootVisualElement.Q<MultiColumnListView>("player-list");
-        playerListView.style.display = DisplayStyle.None;
         playerListView.columns.stretchMode = Columns.StretchMode.GrowAndFill;
         playerListView.columns["name"].makeCell = () => new Label();
         playerListView.columns["networth"].makeCell = () => new Label();
         
         playerListView.columns["name"].bindCell = (element, i) =>
         {
-            (element as Label).text = "howdy fix me";
+            (element as Label).text = bank.Instance.playerNames[i].ToString();
         };
-        playerListView.columns["networth"].bindCell = (element, i) => new Label();
+        playerListView.columns["networth"].bindCell = (element, i) =>
+        {
+            (element as Label).text = "my net worth";
+        };
+        
 
 
         mclv = document.rootVisualElement.Q<MultiColumnListView>("mclv");
-        mclv.style.display = DisplayStyle.None;
 
         mclv.columns.stretchMode = Columns.StretchMode.GrowAndFill;
         mclv.columns["name"].makeCell = () => new Label();
@@ -161,6 +162,15 @@ public class UIManager : MonoBehaviour
             mclv.itemsSource = shitlist;
             mclv.RefreshItems();
 
+            var shitlist2 = new List<PlayerGoodInfo>();
+            for (int i = 0; i < bank.Instance.goods[0].playerPositions.Length; i++)
+            {
+                shitlist2.Add(bank.Instance.goods[0].playerPositions[i]);
+            }
+
+            playerListView.itemsSource = shitlist2;
+            playerListView.RefreshItems();
+
             document.rootVisualElement.Q<Label>("trade-price-label").text =
                 bank.Instance.goods[(int)goodToTrade].price.ToString();
             tradeSection.Q<Label>("trade-price-label").text =
@@ -209,9 +219,6 @@ public class UIManager : MonoBehaviour
     private void ExitStartScreen()
     {
         startScreen.style.display = DisplayStyle.None;
-        tickerView.style.display = DisplayStyle.Flex;
-        managersSection.style.display = DisplayStyle.Flex;
-        goodsSection.style.display = DisplayStyle.Flex;
         gameScreen.style.display = DisplayStyle.Flex;
     }
 
