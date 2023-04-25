@@ -10,9 +10,9 @@ using Random = UnityEngine.Random;
 
 public enum GoodType
 {
+    Horses,
     Cotton,
     Oil,
-    Silk,
     Cows,
     NumGoodType
 }
@@ -64,10 +64,13 @@ public struct PlayerEventNotificationInfo
 public class bank : NetworkBehaviour
 {
     public NetworkVariable<int> health;
-    public int PriceChangeAmount = 1;
+    public int PriceChangeAmount;
+    public float PlayerStartingCash;
 
     public NetworkList<BankGoodInfo> goods;
     public NetworkList<FixedString128Bytes> playerNames;
+    public NetworkList<ulong> playerIds;
+    public NetworkList<int> playerFreeCash;
     public int counter;
     public NetworkManager networkManager;
     public ulong myID;
@@ -89,6 +92,9 @@ public class bank : NetworkBehaviour
     {
         goods = new NetworkList<BankGoodInfo>();
         playerNames = new NetworkList<FixedString128Bytes>();
+        playerIds = new NetworkList<ulong>();
+        playerFreeCash = new NetworkList<int>();
+        
         myID = GetComponent<NetworkObject>().NetworkObjectId;
         counter = 0;
     }
@@ -146,7 +152,8 @@ public class bank : NetworkBehaviour
         }
         
         playerNames.Add(playername);
-        
+        playerIds.Add(id);
+        playerFreeCash.Add((int)PlayerStartingCash);
     }
 
     private void Update()
@@ -306,10 +313,11 @@ public class bank : NetworkBehaviour
             return;
         }
 
-        Debug.Log($"Buying {inc} stock of {type}");
+        Debug.Log($"Trying to buy {inc} stock of {type}");
         var i = (int)type;
         var good = goods[i];
         var positions = good.playerPositions;
+        var playerIdx = playerIds.IndexOf(id);
         for (int j = 0; j < positions.Length; j++)
         {
             var pos = positions[j];
@@ -317,19 +325,19 @@ public class bank : NetworkBehaviour
             {
                 for (int k = 0; k < inc; k++)
                 {
-                    if (good.inventory > 0)
+                    if (good.inventory > 0 && playerFreeCash[playerIdx] >= good.price)
                     {
                         pos.position++;
                         positions[j] = pos;
                         good.inventory--;
+                        playerFreeCash[playerIdx] -= (int)good.price;
                         good.price += PriceChangeAmount;
                         good.playerPositions = positions;
                         goods[i] = good;
                     }
                     else
-                        return;
+                        break;
                 }
-
                 return;
             }
         }

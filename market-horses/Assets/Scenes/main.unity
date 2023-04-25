@@ -251,6 +251,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   document: {fileID: 0}
+  networkManager: {fileID: 128620026}
+  localPlayerName: 
   goodToTrade: 0
 --- !u!114 &256345111
 MonoBehaviour:
@@ -266,7 +268,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: aaa82260a82004d79a26983481ddbf8c, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 4bc72f7c2216f4165adb6feaf439570e,
+    type: 3}
   m_SortingOrder: 0
 --- !u!4 &256345112
 Transform:
@@ -568,6 +571,7 @@ MonoBehaviour:
   health:
     m_InternalValue: 0
   PriceChangeAmount: 1
+  PlayerStartingCash: 100
   counter: 0
   networkManager: {fileID: 128620026}
   myID: 0

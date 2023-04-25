@@ -68,7 +68,6 @@ public class UIManager : MonoBehaviour
         tickerView.bindItem = (element, i) =>
         {
             var myevent = events[i];
-            Debug.Log($"you bet your bottom krone {element} {i}");
             (element as Label).text = $"{myevent.ReceivedTime} at time {myevent.info.secondsFromStart}, {myevent.info.quantity} units of {myevent.type} will be transacted!";
         };
         tickerView.itemsSource = events;
@@ -77,6 +76,7 @@ public class UIManager : MonoBehaviour
         playerListView.columns.stretchMode = Columns.StretchMode.GrowAndFill;
         playerListView.columns["name"].makeCell = () => new Label();
         playerListView.columns["networth"].makeCell = () => new Label();
+        playerListView.columns["freecash"].makeCell = () => new Label();
         
         playerListView.columns["name"].bindCell = (element, i) =>
         {
@@ -84,11 +84,14 @@ public class UIManager : MonoBehaviour
         };
         playerListView.columns["networth"].bindCell = (element, i) =>
         {
-            (element as Label).text = "my net worth";
+            (element as Label).text = ComputePlayerNetWorth(i).ToString();
+        };
+        playerListView.columns["freecash"].bindCell = (element, i) =>
+        {
+            (element as Label).text = bank.Instance.playerFreeCash[i].ToString();
         };
         
-
-
+        
         mclv = document.rootVisualElement.Q<MultiColumnListView>("mclv");
 
         mclv.columns.stretchMode = Columns.StretchMode.GrowAndFill;
@@ -129,6 +132,19 @@ public class UIManager : MonoBehaviour
         };
         
         
+    }
+
+    public float ComputePlayerNetWorth(int playerIdx)
+    {
+        var ret = 0f;
+        for (int i = 0; i < (int)GoodType.NumGoodType; i++)
+        {
+            var bgi = bank.Instance.goods[i];
+            ret += bgi.playerPositions[playerIdx].position * bgi.price;
+        }
+
+        ret += bank.Instance.playerFreeCash[playerIdx];
+        return ret;
     }
 
     [ClientRpc]
