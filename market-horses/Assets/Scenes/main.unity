@@ -572,11 +572,13 @@ MonoBehaviour:
     m_InternalValue: 0
   PriceChangeAmount: 1
   PlayerStartingCash: 100
+  PlayerStartingGoodsValue: 200
   counter: 0
   networkManager: {fileID: 128620026}
   myID: 0
   playerPrefab: {fileID: 0}
-  gameStart: -1
+  gameStart:
+    m_InternalValue: 0
   probabilityOfTellingPlayerAboutAGivenEvent: 0.95
 --- !u!1 &5186279430621136993
 GameObject:

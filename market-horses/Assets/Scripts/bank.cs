@@ -64,8 +64,11 @@ public struct PlayerEventNotificationInfo
 public class bank : NetworkBehaviour
 {
     public NetworkVariable<int> health;
+    
+    [Header("Tuning params")]
     public int PriceChangeAmount;
     public float PlayerStartingCash;
+    public int PlayerStartingGoodsValue;
 
     public NetworkList<BankGoodInfo> goods;
     public NetworkList<FixedString128Bytes> playerNames;
@@ -108,16 +111,7 @@ public class bank : NetworkBehaviour
         Debug.Log("WE SERVER NOW");
         if (goods.Count > 0)
         {
-            for (int i = 0; i < goods.Count; i++)
-            {
-                var good = goods[i];
-                good.playerPositions.Add(new PlayerGoodInfo()
-                {
-                    id = id,
-                    position = 0
-                });
-                goods[i] = good;
-            }
+            GeneratePlayerPositionsForId(id);
         }
         else
         {
@@ -132,13 +126,11 @@ public class bank : NetworkBehaviour
                     futuresPrice = 2.0f,
                     playerPositions = default
                 };
-                bgi.playerPositions.Add(new PlayerGoodInfo()
-                {
-                    id = id,
-                    position = 0
-                });
+
                 goods.Add(bgi);
             }
+            GeneratePlayerPositionsForId(id);
+
             UIManager.Instance.mclv.RefreshItems();
 
             for (int i = 0; i < 20; i++)
@@ -156,6 +148,34 @@ public class bank : NetworkBehaviour
         playerNames.Add(playername);
         playerIds.Add(id);
         playerFreeCash.Add((int)PlayerStartingCash);
+    }
+
+    private void GeneratePlayerPositionsForId(ulong id)
+    {
+        var positions = new float[goods.Count];
+        var sum = 0f;
+        for (int i = 0; i < goods.Count; i++)
+        {
+            var position = Random.Range(0f, 1f);
+            positions[i] = position;
+            sum += position;
+        }
+
+        for (int i = 0; i < goods.Count; i++)
+        {
+            positions[i] = (positions[i] / sum) * PlayerStartingGoodsValue / goods[i].price;
+        }
+        
+        for (int i = 0; i < goods.Count; i++)
+        {
+            var good = goods[i];
+            good.playerPositions.Add(new PlayerGoodInfo()
+            {
+                id = id,
+                position = (int)positions[i]
+            });
+            goods[i] = good;
+        }
     }
 
     private void Update()
@@ -296,25 +316,6 @@ public class bank : NetworkBehaviour
 
         throw new Exception("Player position not found");
     }
-
-    [ServerRpc]
-    void CmdBuyGoodServerRpc(GoodType type, ulong id, int inc)
-    {
-        if (IsServer)
-        {
-            for (int i = 0; i < goods.Count; i++)
-            {
-                var good = goods[i];
-                if (good.type == type)
-                {
-                    good.inventory += inc;
-                    goods[i] = good;
-                    break;
-                }
-            }
-        }
-    }
-
 
     [ServerRpc]
     public void BuyStockServerRpc(GoodType type, ulong id, int inc)
