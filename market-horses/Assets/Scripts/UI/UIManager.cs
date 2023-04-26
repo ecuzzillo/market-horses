@@ -18,7 +18,11 @@ public class UIManager : MonoBehaviour
     public UIDocument document;
     public NetworkManager networkManager;
     public string localPlayerName;
+    public Label clockLabel;
+    public Label localPlayerFreeCashLabel;
+    public Label localPlayerNetWorthLabel;
     public VisualElement tickerSection;
+    public Button startGameButton;
     public VisualElement managersSection;
     public VisualElement goodsSection;
     public VisualElement tradeSection;
@@ -44,6 +48,14 @@ public class UIManager : MonoBehaviour
 
         document = GetComponent<UIDocument>();
 
+        clockLabel = document.rootVisualElement.Q<Label>("clock");
+        localPlayerFreeCashLabel = document.rootVisualElement.Q<Label>("self-freecash");
+        localPlayerNetWorthLabel = document.rootVisualElement.Q<Label>("self-networth");
+
+        startGameButton = document.rootVisualElement.Q<Button>("start-game-button");
+        startGameButton.style.display = DisplayStyle.None;
+        startGameButton.RegisterCallback<ClickEvent>(OnStartGameClick);
+        
         tickerSection = document.rootVisualElement.Q("ticker-section");
         managersSection = document.rootVisualElement.Q("managers-section");
         goodsSection = document.rootVisualElement.Q("goods-section");
@@ -130,8 +142,6 @@ public class UIManager : MonoBehaviour
             (element as Button).clicked +=
                 () => ShowTradeView((GoodType)index);
         };
-        
-        
     }
 
     public float ComputePlayerNetWorth(int playerIdx)
@@ -157,19 +167,14 @@ public class UIManager : MonoBehaviour
             events.Add(new VisualEventInfo { info = e, ReceivedTime = Time.time, type = goodType });
             tickerView.RefreshItems();
         }
-        else
-        {
-            Debug.Log($"wanted id {playerId} but got {localPlayerId}");
-        }
     }
 
     private void Update()
     {
-
         if (bank.Instance.IsSpawned && bank.Instance.goods.Count > 0)
         {
             var shitlist = new List<BankGoodInfo>();
-                
+
             for (int i = 0; i < (int)GoodType.NumGoodType; i++)
             {
                 shitlist.Add(bank.Instance.goods[i]);
@@ -193,6 +198,16 @@ public class UIManager : MonoBehaviour
                 bank.Instance.goods[(int)goodToTrade].price.ToString();
             tradeSection.Q<Label>("trade-position").text =
                 bank.Instance.GetPlayerGoodInfo(goodToTrade, Player.LocalPlayerId()).position.ToString();
+
+            var localPlayerIdx = Player.LocalPlayerIdx();
+            localPlayerFreeCashLabel.text = bank.Instance.playerFreeCash[localPlayerIdx].ToString();
+            localPlayerNetWorthLabel.text = ComputePlayerNetWorth(localPlayerIdx).ToString();
+
+            var gameStartValue = bank.Instance.gameStart.Value;
+            if (gameStartValue >= 0)
+            {
+                clockLabel.text = ((int)(Time.time - gameStartValue)).ToString();
+            }
         }
     }
 
@@ -229,7 +244,16 @@ public class UIManager : MonoBehaviour
         networkManager.StartHost();
 
         ExitStartScreen();
+        startGameButton.style.display = DisplayStyle.Flex;
+        tickerSection.style.display = DisplayStyle.None;
 
+    }
+
+    public void OnStartGameClick(ClickEvent evt)
+    {
+        bank.Instance.GenerateEventsForGameServerRpc();
+        startGameButton.style.display = DisplayStyle.None;
+        tickerSection.style.display = DisplayStyle.Flex;
     }
 
     private void ExitStartScreen()

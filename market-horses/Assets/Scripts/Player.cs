@@ -23,6 +23,11 @@ public class Player : NetworkBehaviour
         Debug.Log("Oh NOOOO");
         return 0;
     }
+    
+    public static int LocalPlayerIdx()
+    {
+        return bank.Instance.playerIds.IndexOf(LocalPlayerId());
+    }
 
     public static Player LocalPlayer()
     {

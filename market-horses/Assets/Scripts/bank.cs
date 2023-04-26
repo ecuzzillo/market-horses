@@ -77,14 +77,13 @@ public class bank : NetworkBehaviour
     public GameObject playerPrefab;
     public static bank Instance;
 
-    public float gameStart;
+    public NetworkVariable<float> gameStart;
     public float probabilityOfTellingPlayerAboutAGivenEvent;
     public Dictionary<ulong, List<PlayerEventNotificationInfo>> pings =
         new Dictionary<ulong, List<PlayerEventNotificationInfo>>();
 
     public bank()
     {
-        gameStart = -1;
         Instance = this;
     }
 
@@ -94,6 +93,9 @@ public class bank : NetworkBehaviour
         playerNames = new NetworkList<FixedString128Bytes>();
         playerIds = new NetworkList<ulong>();
         playerFreeCash = new NetworkList<int>();
+        gameStart = new NetworkVariable<float>();
+        gameStart.Value = -1;
+
         
         myID = GetComponent<NetworkObject>().NetworkObjectId;
         counter = 0;
@@ -142,7 +144,7 @@ public class bank : NetworkBehaviour
             for (int i = 0; i < 20; i++)
             {
                 var myevent = new EventInfo();
-                var type = UnityEngine.Random.Range(0, ((int)GoodType.NumGoodType - 1));
+                var type = Random.Range(0, ((int)GoodType.NumGoodType - 1));
                 myevent.quantity = Random.Range(-100, 100);
                 myevent.secondsFromStart = Random.Range(0, 120);
                 var tmp = goods[type];
@@ -158,10 +160,87 @@ public class bank : NetworkBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         if (goods.Count == 0) return;
+
+        ProcessEvents();
+
+        if (gameStart.Value > 0)
+        {
+            var timeSinceStartAsOfnow = Time.time - gameStart.Value;
+            foreach (var (k, v) in pings)
+            {
+                for (int i = v.Count - 1; i >= 0; i--)
+                {
+                    var entry = v[i];
+                    var eventInfo = goods[(int)entry.goodType].eventsForThisGood[entry.eventIdx];
+                    if (eventInfo.secondsFromStart - entry.notificationLeadTime < timeSinceStartAsOfnow)
+                    {
+                        Debug.Log(
+                            $"trying to notify??? about event {entry.goodType} {eventInfo.quantity} for player {k}");
+                        UIManager.Instance.GetEventPingClientRpc(k, entry.goodType, eventInfo);
+                        v.RemoveAt(i);
+                    }
+
+                }
+            }
+        }
+        else
+        {
+            Debug.Log($"gamestart was {gameStart.Value} so fuck off");
+        }
+    }
+
+    [ServerRpc]
+    public void GenerateEventsForGameServerRpc()
+    {
+        Debug.Log("G!");
+        gameStart.Value = Time.time;
+
+        var playerids = new List<ulong>();
+
+        for (int i = 0; i < goods[0].playerPositions.Length; i++)
+        {
+            playerids.Add(goods[0].playerPositions[i].id);
+        }
+
+        foreach (var id in playerids)
+        {
+            pings[id] = new List<PlayerEventNotificationInfo>();
+        }
+
+        for (int i = 0; i < (int)GoodType.NumGoodType; i++)
+        {
+            var events = goods[i].eventsForThisGood;
+            for (int j = 0; j < events.Length; j++)
+            {
+                foreach (var id in playerids)
+                {
+                    var thing = Random.Range(0f, 1f);
+                    if (thing < probabilityOfTellingPlayerAboutAGivenEvent)
+                    {
+                        Debug.Log($"added thing {i} {j}");
+                        pings[id]
+                            .Add(new PlayerEventNotificationInfo()
+                            {
+                                eventIdx = j,
+                                goodType = (GoodType)i,
+                                notificationLeadTime = Random.Range(5, 60)
+                            });
+                    }
+                }
+            }
+        }
+    }
+
+
+    private void ProcessEvents()
+    {
+        if (gameStart.Value < 0) return;
         
         var time = Time.time;
-        for (int i=0; i<(int)GoodType.NumGoodType; i++)
+        for (int i = 0; i < (int)GoodType.NumGoodType; i++)
         {
             var events = goods[i].eventsForThisGood;
             for (int j = 0; j < events.Length; j++)
@@ -196,74 +275,6 @@ public class bank : NetworkBehaviour
             var tmp = goods[i];
             tmp.eventsForThisGood = events;
             goods[i] = tmp;
-        }
-
-        if (IsOwner)
-        {
-            if (Input.GetKeyDown(KeyCode.G) && gameStart < 0)
-            {
-                Debug.Log("G!");
-                gameStart = Time.time;
-
-                var playerids = new List<ulong>();
-
-                for (int i = 0; i < goods[0].playerPositions.Length; i++)
-                {
-                    playerids.Add(goods[0].playerPositions[i].id);
-                }
-                
-                foreach (var id in playerids)
-                {
-                    pings[id] = new List<PlayerEventNotificationInfo>();
-                }
-
-                for (int i = 0; i < (int)GoodType.NumGoodType; i++)
-                {
-                    var events = goods[i].eventsForThisGood;
-                    for (int j = 0; j < events.Length; j++)
-                    {
-                        foreach (var id in playerids)
-                        {
-                            var thing = Random.Range(0f, 1f);
-                            if (thing < probabilityOfTellingPlayerAboutAGivenEvent)
-                            {
-                                Debug.Log($"added thing {i} {j}");
-                                pings[id]
-                                    .Add(new PlayerEventNotificationInfo()
-                                    {
-                                        eventIdx = j,
-                                        goodType = (GoodType)i,
-                                        notificationLeadTime = Random.Range(5, 60)
-                                    });
-                            }
-                        }
-                    }
-                }
-            }
-            else if (gameStart > 0)
-            {
-                var timeSinceStartAsOfnow = Time.time - gameStart;
-                foreach (var (k, v) in pings)
-                {
-                    for (int i = v.Count - 1; i >= 0; i--)
-                    {
-                        var entry = v[i];
-                        var eventInfo = goods[(int)entry.goodType].eventsForThisGood[entry.eventIdx];
-                        if (eventInfo.secondsFromStart - entry.notificationLeadTime < timeSinceStartAsOfnow)
-                        {
-                            Debug.Log($"trying to notify??? about event {entry.goodType} {eventInfo.quantity} for player {k}");
-                            UIManager.Instance.GetEventPingClientRpc(k, entry.goodType, eventInfo);
-                            v.RemoveAt(i);
-                        }
-
-                    }
-                }
-            }
-            else
-            {
-                Debug.Log($"gamestart was {gameStart} so fuck off");
-            }
-
         }
     }
 
@@ -355,6 +366,7 @@ public class bank : NetworkBehaviour
         var i = (int)type;
 
         var good = goods[i];
+        var playerIdx = playerIds.IndexOf(id);
 
         var positions = good.playerPositions;
         for (int j = 0; j < positions.Length; j++)
@@ -369,6 +381,7 @@ public class bank : NetworkBehaviour
                         pos.position--;
                         positions[j] = pos;
                         good.inventory++;
+                        playerFreeCash[playerIdx] += (int)good.price;
                         good.price -= PriceChangeAmount;
                         good.playerPositions = positions;
                         goods[i] = good;
