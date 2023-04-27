@@ -422,7 +422,12 @@ public class bank : NetworkBehaviour
                         positions[j] = pos;
                         good.inventory++;
                         playerFreeCash[playerIdx] += (int)good.price;
-                        good.price -= PriceChangeAmount;
+                        if (good.price - PriceChangeAmount > 1) {
+                            good.price -= PriceChangeAmount;
+                        } else
+                        {
+                            good.price = 1;
+                        }
                         good.playerPositions = positions;
                         goods[i] = good;
                     }
