@@ -14,6 +14,36 @@ public struct PlayerGoodInfo : INetworkSerializeByMemcpy
     public int position;
 }
 
+public struct Offer : INetworkSerializeByMemcpy, IEquatable<Offer>
+{
+    public bool OfferToBuy;
+    public GoodType goodType;
+    public ulong OfferingPlayerId;
+    public ulong OffereePlayerId;
+    public int count;
+    public float price;
+
+    public bool Equals(Offer other)
+    {
+        return OfferToBuy == other.OfferToBuy &&
+               goodType == other.goodType &&
+               OfferingPlayerId == other.OfferingPlayerId &&
+               OffereePlayerId == other.OffereePlayerId &&
+               count == other.count &&
+               price.Equals(other.price);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is Offer other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(OfferToBuy, (int)goodType, OfferingPlayerId, OffereePlayerId, count, price);
+    }
+}
+
 public enum GoodType
 {
     Horses,
@@ -80,6 +110,7 @@ public class bank : NetworkBehaviour
     public NetworkList<FixedString128Bytes> playerNames;
     public NetworkList<ulong> playerIds;
     public NetworkList<int> playerFreeCash;
+    public NetworkList<Offer> allOffers;
     public int counter;
     public NetworkManager networkManager;
     public ulong myID;
@@ -104,6 +135,7 @@ public class bank : NetworkBehaviour
         playerFreeCash = new NetworkList<int>();
         gameStart = new NetworkVariable<float>();
         gameStart.Value = -1;
+        allOffers = new NetworkList<Offer>();
 
         
         myID = GetComponent<NetworkObject>().NetworkObjectId;
@@ -137,7 +169,7 @@ public class bank : NetworkBehaviour
             }
             GeneratePlayerPositionsForId(id);
 
-            UIManager.Instance.mclv.RefreshItems();
+            UIManager.Instance.UpdateForNewPlayer();
 
             for (int i = 0; i < 20; i++)
             {
@@ -155,6 +187,7 @@ public class bank : NetworkBehaviour
         playerIds.Add(id);
         playerFreeCash.Add((int)PlayerStartingCash);
     }
+    
 
     private void GeneratePlayerPositionsForId(ulong id)
     {
