@@ -8,6 +8,12 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
+public struct PlayerGoodInfo : INetworkSerializeByMemcpy
+{
+    public ulong id;
+    public int position;
+}
+
 public enum GoodType
 {
     Horses,
