@@ -17,6 +17,7 @@ public struct VisualEventInfo
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
+
     
     public UIDocument document;
     public NetworkManager networkManager;
@@ -31,17 +32,7 @@ public class UIManager : MonoBehaviour
     public VisualElement tradeSection;
     public VisualElement gameScreen;
     
-    
-    public VisualElement tradeWithPlayerSection;
-    public bool twpsIsBuying = true;
-    public Button twps_buytoggle;
-    public DropdownField twps_GoodDropDown;
-    public DropdownField twps_PlayerDropDown;
-    public int twps_PlayerIdx;
-    public TextField twps_QuantityField;
-    public TextField twps_PriceField;
-    public Button twps_CancelButton;
-    public Button twps_ConfirmButton;
+    public TradeWithPlayerScreen twps;
 
     public VisualElement startScreen;
 
@@ -83,7 +74,9 @@ public class UIManager : MonoBehaviour
         startScreen.style.display = DisplayStyle.Flex;
         startScreen.Q<Button>("join-game-button").RegisterCallback<ClickEvent>(OnJoinGameClick);
         startScreen.Q<Button>("host-game-button").RegisterCallback<ClickEvent>(OnHostGameClick);
-        
+
+        document.rootVisualElement.Q("game-screen").style.display = DisplayStyle.None;
+            
         tradeSection.style.display = DisplayStyle.None;
         tradeSection.Q<Button>("exit-button").RegisterCallback<ClickEvent>(OnTradeExitClick);
         tradeSection.Q<Button>("buy-button").RegisterCallback<ClickEvent>(OnTradeBuyClick);
@@ -166,82 +159,32 @@ public class UIManager : MonoBehaviour
                 () => ShowTradeView((GoodType)index);
         };
 
-        tradeWithPlayerSection = document.rootVisualElement.Q("trade-with-player-section");
-        tradeWithPlayerSection.style.display = DisplayStyle.None;
-        twps_buytoggle = tradeWithPlayerSection.Q<Button>("buy-sell-toggle");
-        twps_buytoggle.RegisterCallback<ClickEvent>(evt =>
-        {
-            twpsIsBuying = !twpsIsBuying;
-            twps_buytoggle.text = twpsIsBuying ? "Buying" : "Selling";
-        });
-        
-        twps_GoodDropDown = tradeWithPlayerSection.Q<DropdownField>("choose-good");
-        var strings = Enum.GetNames(typeof(GoodType)).ToList();
-        twps_GoodDropDown.choices = strings.ToList();
-        twps_GoodDropDown.RegisterValueChangedCallback(evt =>
-        {
-            goodToTrade = (GoodType)strings.IndexOf(evt.newValue);
-        });
-
-        twps_PlayerDropDown = tradeWithPlayerSection.Q<DropdownField>("choose-player");
-        twps_UpdatePlayerList();
-        twps_PlayerDropDown.RegisterValueChangedCallback(evt =>
-        {
-            for (int i = 0; i < bank.Instance.playerNames.Count; i++)
-            {
-                if (bank.Instance.playerNames[i].ToString().Equals(evt.newValue))
-                {
-                    twps_PlayerIdx = i;
-                    break;
-                }
-            }
-
-            Debug.Log($"OH NO! COULDNT FIND PLAYER {evt.newValue} FROM DROPDOWN");
-        });
-
-        twps_QuantityField = tradeWithPlayerSection.Q<TextField>("quantity-field");
-        twps_PriceField = tradeWithPlayerSection.Q<TextField>("price-field");
-
-        twps_CancelButton = tradeWithPlayerSection.Q<Button>("cancel-button");
-        twps_CancelButton.RegisterCallback<ClickEvent>(evt =>
-        {
-            tradeWithPlayerSection.style.display = DisplayStyle.None;
-        });
-        twps_ConfirmButton = tradeWithPlayerSection.Q<Button>("confirm-button");
-        twps_ConfirmButton.RegisterCallback<ClickEvent>(evt =>
-        {
-            var newoffer = new Offer
-            {
-                count = Int32.Parse(twps_QuantityField.text),
-                goodType = goodToTrade,
-                OffereePlayerId = bank.Instance.playerIds[twps_PlayerIdx],
-                OfferingPlayerId = Player.LocalPlayerId(),
-                OfferToBuy = twpsIsBuying,
-                price = Single.Parse(twps_PriceField.text)
-            };
-
-            bank.Instance.allOffers.Add(newoffer);
-            tradeWithPlayerSection.style.display = DisplayStyle.None;
-        });
+        twps = new TradeWithPlayerScreen();
+        twps.Init();
     }
 
     public void UpdateForNewPlayer()
     {
         mclv.RefreshItems();
-        twps_UpdatePlayerList();
+        twps.UpdatePlayerList();
     }
-    public void twps_UpdatePlayerList()
-    {
-        var shitlist = new List<string>();
-        foreach (var shit in bank.Instance.playerNames)
-            shitlist.Add(shit.Value);
-        twps_PlayerDropDown.choices = shitlist;
-    }
+
 
     public void ShowTradeWithPlayerView(int playerIdx)
     {
-        Debug.Log("oh no didn't implement show trade with player view");
+        twps.PlayerIdx = playerIdx;
+
+        twps.tradeWithPlayerSection.style.display = DisplayStyle.Flex;
+        managersSection.style.display = DisplayStyle.None;
+        goodsSection.style.display = DisplayStyle.None;
     }
+    public void HideTradeWithPlayerView()
+    {
+        twps.tradeWithPlayerSection.style.display = DisplayStyle.None;
+        managersSection.style.display = DisplayStyle.Flex;
+        goodsSection.style.display = DisplayStyle.Flex;
+    }
+    
 
     public float ComputePlayerNetWorth(int playerIdx)
     {
@@ -262,7 +205,6 @@ public class UIManager : MonoBehaviour
         var localPlayerId = Player.LocalPlayerId();
         if (playerId == localPlayerId)
         {
-            Debug.Log($"added event with receivedtime {Time.time} to list!");
             events.Add(new VisualEventInfo { info = e, ReceivedTime = Time.time, type = goodType });
             tickerView.RefreshItems();
         }
@@ -307,6 +249,8 @@ public class UIManager : MonoBehaviour
             {
                 clockLabel.text = ((int)(Time.time - gameStartValue)).ToString();
             }
+            
+            twps.MyUpdate();
         }
     }
 

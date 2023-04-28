@@ -40,6 +40,12 @@ public class Player : NetworkBehaviour
         throw new Exception("aw geez no player");
     }
 
+    public static int PlayerIdxFromId(ulong id)
+    {
+        return bank.Instance.playerIds.IndexOf(id);
+    }
+    
+
     void Start()
     {
         idobj = GetComponent<NetworkObject>();

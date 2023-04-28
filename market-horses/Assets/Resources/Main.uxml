@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Style.uss?fileID=7433441132597879392&amp;guid=66ce8e2964a884904999f9b2a36e87d4&amp;type=3#Style" />
-    <ui:VisualElement name="game-screen" style="flex-grow: 1; background-color: rgba(255, 255, 255, 0); display: none; justify-content: space-between;">
+    <ui:VisualElement name="game-screen" style="flex-grow: 1; background-color: rgba(255, 255, 255, 0); display: flex; justify-content: space-between;">
         <ui:VisualElement name="header" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); height: -882px; width: auto; max-height: 50px; flex-direction: row; align-items: center; justify-content: space-around; min-width: auto;">
             <ui:Label tabindex="-1" text="Time:" display-tooltip-when-elided="true" name="time-label" />
             <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="clock" />
@@ -13,7 +13,7 @@
                 <ui:Label tabindex="-1" text="0" display-tooltip-when-elided="true" name="self-networth" />
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:Button text="Start Game" display-tooltip-when-elided="true" name="start-game-button" />
+        <ui:Button text="Start Game" display-tooltip-when-elided="true" name="start-game-button" style="background-image: none;" />
         <ui:VisualElement name="ticker-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); display: none;">
             <ui:Label text="News Ticker" display-tooltip-when-elided="true" style="align-items: auto; -unity-text-align: upper-center;" />
             <ui:ListView focusable="true" name="ticker-list" />
@@ -51,23 +51,41 @@
             <ui:Button text="X" display-tooltip-when-elided="true" name="exit-button" />
         </ui:VisualElement>
         <ui:VisualElement name="trade-with-player-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: center; justify-content: flex-start; display: flex; align-self: stretch;">
-            <ui:VisualElement name="TopRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-width: 390px; max-height: 40px; min-width: 0;">
-                <ui:Button text="Buying" display-tooltip-when-elided="true" name="buy-sell-toggle" />
-                <ui:DropdownField index="0" choices="Horses" name="choose-good" />
-                <ui:Label tabindex="-1" text="To" display-tooltip-when-elided="true" />
-                <ui:DropdownField index="0" choices="Elliot" name="choose-player" />
+            <ui:VisualElement name="TabRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-height: 40px;">
+                <ui:Button text="Make Offer" display-tooltip-when-elided="true" name="make-offer" style="background-image: none;" />
+                <ui:Button text="Receive Offers" display-tooltip-when-elided="true" name="receive-offers" />
             </ui:VisualElement>
-            <ui:VisualElement name="SecondRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-height: 40px;">
-                <ui:TextField picking-mode="Ignore" label="Quantity" value="0" name="quantity-field" />
-                <ui:TextField picking-mode="Ignore" label="Price" value="0" name="price-field" />
+            <ui:VisualElement name="make-offer-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); display: none;">
+                <ui:VisualElement name="TopRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-width: 390px; max-height: 40px; min-width: 0;">
+                    <ui:Button text="Buying" display-tooltip-when-elided="true" name="buy-sell-toggle" />
+                    <ui:DropdownField index="0" choices="Horses" name="choose-good" />
+                    <ui:Label tabindex="-1" text="To" display-tooltip-when-elided="true" />
+                    <ui:DropdownField index="0" choices="Elliot" name="choose-player" />
+                </ui:VisualElement>
+                <ui:VisualElement name="SecondRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-height: 40px;">
+                    <ui:TextField picking-mode="Ignore" label="Quantity" value="0" name="quantity-field" />
+                    <ui:TextField picking-mode="Ignore" label="Price" value="0" name="price-field" />
+                </ui:VisualElement>
+                <ui:VisualElement name="ThirdRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-height: 40px; align-items: flex-end; justify-content: center;">
+                    <ui:Button text="Cancel" display-tooltip-when-elided="true" name="cancel-button" />
+                    <ui:Button text="Confirm" display-tooltip-when-elided="true" name="confirm-button" />
+                </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement name="ThirdRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-height: 40px;">
-                <ui:Button text="Cancel" display-tooltip-when-elided="true" name="cancel-button" />
-                <ui:Button text="Confirm" display-tooltip-when-elided="true" name="confirm-button" />
+            <ui:VisualElement name="receive-offers-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); width: 100%;">
+                <ui:MultiColumnListView name="offers-list" fixed-item-height="40" style="flex-direction: row; justify-content: space-between;">
+                    <ui:Columns>
+                        <ui:Column name="player-name" title="From" stretchable="true" />
+                        <ui:Column name="good" title="Good" stretchable="true" />
+                        <ui:Column name="summary" title="Summary" stretchable="true" />
+                        <ui:Column name="cost" title="Cost" stretchable="true" />
+                        <ui:Column name="accept" stretchable="true" />
+                        <ui:Column name="reject" stretchable="true" />
+                    </ui:Columns>
+                </ui:MultiColumnListView>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:VisualElement name="start-screen" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: center; justify-content: space-around; flex-direction: column; display: flex;">
+    <ui:VisualElement name="start-screen" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: center; justify-content: space-around; flex-direction: column; display: none;">
         <ui:Label tabindex="-1" text="MARKET HORSES" display-tooltip-when-elided="true" name="title" style="font-size: 35px; -unity-font-style: bold;" />
         <ui:TextField picking-mode="Ignore" label="IP to connect to:" name="ip-address-field" />
         <ui:TextField picking-mode="Ignore" label="Enter name:" value="elliot" name="name-field" style="justify-content: center; align-items: stretch;" />

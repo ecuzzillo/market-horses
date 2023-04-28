@@ -109,7 +109,7 @@ public class bank : NetworkBehaviour
     public NetworkList<BankGoodInfo> goods;
     public NetworkList<FixedString128Bytes> playerNames;
     public NetworkList<ulong> playerIds;
-    public NetworkList<int> playerFreeCash;
+    public NetworkList<float> playerFreeCash;
     public NetworkList<Offer> allOffers;
     public int counter;
     public NetworkManager networkManager;
@@ -132,7 +132,7 @@ public class bank : NetworkBehaviour
         goods = new NetworkList<BankGoodInfo>();
         playerNames = new NetworkList<FixedString128Bytes>();
         playerIds = new NetworkList<ulong>();
-        playerFreeCash = new NetworkList<int>();
+        playerFreeCash = new NetworkList<float>();
         gameStart = new NetworkVariable<float>();
         gameStart.Value = -1;
         allOffers = new NetworkList<Offer>();
@@ -141,12 +141,18 @@ public class bank : NetworkBehaviour
         myID = GetComponent<NetworkObject>().NetworkObjectId;
         counter = 0;
     }
+    
+    
 
     public void AddPlayerInfo(ulong id, string playername)
     {
         Debug.Log($"Server: {IsServer} -- Host: {IsHost} -- Client: {IsClient}");
         if (!IsHost) { Debug.Log("WE NOT SERVER NOW");  return; }
         Debug.Log("WE SERVER NOW");
+        playerNames.Add(playername);
+        playerIds.Add(id);
+        playerFreeCash.Add((int)PlayerStartingCash);
+        
         if (goods.Count > 0)
         {
             GeneratePlayerPositionsForId(id);
@@ -182,10 +188,6 @@ public class bank : NetworkBehaviour
                 goods[type] = tmp;
             }
         }
-        
-        playerNames.Add(playername);
-        playerIds.Add(id);
-        playerFreeCash.Add((int)PlayerStartingCash);
     }
     
 
@@ -217,6 +219,55 @@ public class bank : NetworkBehaviour
         }
     }
 
+    [ServerRpc]
+    public void ConsummateDealServerRpc(int offerIdx)
+    {
+        //figure out how much good to transfer
+        //figure out how much money to transfer
+        //remove offer from alloffers list
+        //call ui update
+        var o = allOffers[offerIdx];
+        var offereeIdx = Player.PlayerIdxFromId(o.OffereePlayerId);
+        var offeringIdx = Player.PlayerIdxFromId(o.OfferingPlayerId);
+
+        var receivingGoodsIdx = o.OfferToBuy ? offeringIdx : offereeIdx;
+        var receivingCashIdx = o.OfferToBuy ? offereeIdx : offeringIdx;
+        for (int i = 0; i < goods.Count; i++)
+        {
+            if (i == (int)o.goodType)
+            {
+                var overallCashToTransfer = o.count * o.price;
+                var tmpbgi = goods[i];
+                var tmppgiReceivingCash = tmpbgi.playerPositions[receivingCashIdx];
+                if (tmppgiReceivingCash.position < o.count)
+                {
+                    Debug.LogError($"OH NO! Trying to consummate offer we're not supposed to! Player " +
+                                   $"{receivingCashIdx} didn't have enough of {o.goodType} to do the deal with " +
+                                   $"{receivingGoodsIdx}, but we tried anyway!");
+                }
+                tmppgiReceivingCash.position -= o.count;
+                playerFreeCash[receivingCashIdx] += overallCashToTransfer;
+                tmpbgi.playerPositions[receivingCashIdx] = tmppgiReceivingCash;
+
+                var tmppgiReceivingGoods = tmpbgi.playerPositions[receivingGoodsIdx];
+                tmppgiReceivingGoods.position += o.count;
+                if (playerFreeCash[receivingGoodsIdx] < overallCashToTransfer)
+                {
+                    Debug.LogError($"OH NO! Trying to consummate offer we're not supposed to! Player" +
+                                   $" {receivingGoodsIdx} didn't have enough of cash to do the deal with " +
+                                   $"{receivingCashIdx}, but we tried anyway!");
+                }
+                playerFreeCash[receivingGoodsIdx] -= overallCashToTransfer;
+                tmpbgi.playerPositions[receivingGoodsIdx] = tmppgiReceivingGoods;
+
+                goods[i] = tmpbgi;
+                allOffers.RemoveAt(offerIdx);
+                return;
+            }
+        }
+        Debug.LogError("OH NO BAD GOOD");
+    }
+
     private void Update()
     {
         if (!IsOwner) return;
@@ -236,8 +287,6 @@ public class bank : NetworkBehaviour
                     var eventInfo = goods[(int)entry.goodType].eventsForThisGood[entry.eventIdx];
                     if (eventInfo.secondsFromStart - entry.notificationLeadTime < timeSinceStartAsOfnow)
                     {
-                        Debug.Log(
-                            $"trying to notify??? about event {entry.goodType} {eventInfo.quantity} for player {k}");
                         UIManager.Instance.GetEventPingClientRpc(k, entry.goodType, eventInfo);
                         v.RemoveAt(i);
                     }
@@ -325,7 +374,6 @@ public class bank : NetworkBehaviour
 
                     goods[i] = bankGoodInfo;
                     eventInfo.done = true;
-                    Debug.Log($"Just handled event {i} {j}");
                 }
 
                 events[j] = eventInfo;
