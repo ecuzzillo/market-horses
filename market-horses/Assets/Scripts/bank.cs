@@ -8,12 +8,14 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Random = UnityEngine.Random;
 
+[Serializable]
 public struct PlayerGoodInfo : INetworkSerializeByMemcpy
 {
     public ulong id;
     public int position;
 }
 
+[Serializable]
 public struct Offer : INetworkSerializeByMemcpy, IEquatable<Offer>
 {
     public bool OfferToBuy;
@@ -55,11 +57,39 @@ public enum GoodType
     NumGoodType
 }
 
+[Serializable]
 public struct EventInfo
 {
     public int quantity;
     public int secondsFromStart;
     public bool done;
+}
+
+[Serializable]
+public struct GameStateInfo : INetworkSerializeByMemcpy, IEquatable<GameStateInfo>
+{
+    public int dayNumber;
+    public bool marketOpenNow;
+    public float gameStartTime;
+    public float secondsUntilMarketToggles;
+
+    public bool Equals(GameStateInfo other)
+    {
+        return dayNumber == other.dayNumber &&
+               marketOpenNow == other.marketOpenNow &&
+               gameStartTime.Equals(other.gameStartTime) &&
+               secondsUntilMarketToggles.Equals(other.secondsUntilMarketToggles);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is GameStateInfo other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(dayNumber, marketOpenNow, gameStartTime, secondsUntilMarketToggles);
+    }
 }
 
 
@@ -92,6 +122,7 @@ public struct BankGoodInfo : INetworkSerializeByMemcpy, IEquatable<BankGoodInfo>
     }
 }
 
+[Serializable]
 public struct PlayerEventNotificationInfo
 {
     public int notificationLeadTime;
@@ -105,22 +136,23 @@ public class bank : NetworkBehaviour
     public int PriceChangeAmount;
     public float PlayerStartingCash;
     public int PlayerStartingGoodsValue;
+    public float probabilityOfTellingPlayerAboutAGivenEvent;
+    public float SecondsOfOpenMarketPerDay;
+    public float SecondsOfClosedMarketPerNight;
+    public float SecondsBetweenClockUIUpdates;
 
+    [Header("Network stuff")]
     public NetworkList<BankGoodInfo> goods;
     public NetworkList<FixedString128Bytes> playerNames;
     public NetworkList<ulong> playerIds;
     public NetworkList<float> playerFreeCash;
     public NetworkList<Offer> allOffers;
+    public NetworkVariable<GameStateInfo> gameState;
+
     public ulong nextGuid;
 
-    public int counter;
-    public NetworkManager networkManager;
-    public ulong myID;
-    public GameObject playerPrefab;
     public static bank Instance;
 
-    public NetworkVariable<float> gameStart;
-    public float probabilityOfTellingPlayerAboutAGivenEvent;
     public Dictionary<ulong, List<PlayerEventNotificationInfo>> pings =
         new Dictionary<ulong, List<PlayerEventNotificationInfo>>();
 
@@ -135,16 +167,11 @@ public class bank : NetworkBehaviour
         playerNames = new NetworkList<FixedString128Bytes>();
         playerIds = new NetworkList<ulong>();
         playerFreeCash = new NetworkList<float>();
-        gameStart = new NetworkVariable<float>();
-        gameStart.Value = -1;
         allOffers = new NetworkList<Offer>();
-
-        
-        myID = GetComponent<NetworkObject>().NetworkObjectId;
-        counter = 0;
+        gameState = new NetworkVariable<GameStateInfo>();
+        gameState.Value = new GameStateInfo()
+            { dayNumber = -1, gameStartTime = -1, marketOpenNow = false, secondsUntilMarketToggles = -1 };
     }
-    
-    
 
     public void AddPlayerInfo(ulong id, string playername)
     {
@@ -291,12 +318,37 @@ public class bank : NetworkBehaviour
         if (!IsOwner) return;
 
         if (goods.Count == 0) return;
+        
+        
+        /*
+ * on server / bank side, divide time by length of day + night, figure out what day it is, and if we've changed what
+ * phase we're in, grey out or un grey out the buttons, and update what day it is.
+ *
+ * also, for all the event text, start specifying a day instead of a number of seconds.
+ * 
+*/
+        
+        
 
         ProcessEvents();
 
-        if (gameStart.Value > 0)
+        var gameStateV = gameState.Value;
+        if (gameStateV.gameStartTime > 0)
         {
-            var timeSinceStartAsOfnow = Time.time - gameStart.Value;
+            var timeSinceStartAsOfnow = Time.time - gameStateV.gameStartTime;
+            var dayLength = (SecondsOfOpenMarketPerDay + SecondsOfClosedMarketPerNight);
+            var timeInDays = timeSinceStartAsOfnow / dayLength;
+            gameStateV.dayNumber = (int)timeInDays;
+            var secondsInDaySoFar = timeSinceStartAsOfnow - dayLength * gameStateV.dayNumber;
+
+            gameStateV.marketOpenNow = secondsInDaySoFar < SecondsOfOpenMarketPerDay;
+
+            gameStateV.secondsUntilMarketToggles = gameStateV.marketOpenNow
+                ? (SecondsOfOpenMarketPerDay - secondsInDaySoFar)
+                : (dayLength - secondsInDaySoFar);
+
+            gameState.Value = gameStateV;
+            
             foreach (var (k, v) in pings)
             {
                 for (int i = v.Count - 1; i >= 0; i--)
@@ -312,18 +364,18 @@ public class bank : NetworkBehaviour
                 }
             }
         }
-        else
-        {
-            Debug.Log($"gamestart was {gameStart.Value} so fuck off");
-        }
     }
 
     [ServerRpc]
     public void GenerateEventsForGameServerRpc()
     {
-        Debug.Log("G!");
-        gameStart.Value = Time.time;
-
+        gameState.Value = new GameStateInfo()
+        {
+            dayNumber = 0,
+            gameStartTime = Time.time,
+            marketOpenNow = true,
+            secondsUntilMarketToggles = 0
+        };
         var playerids = new List<ulong>();
 
         for (int i = 0; i < goods[0].playerPositions.Length; i++)
@@ -346,7 +398,6 @@ public class bank : NetworkBehaviour
                     var thing = Random.Range(0f, 1f);
                     if (thing < probabilityOfTellingPlayerAboutAGivenEvent)
                     {
-                        Debug.Log($"added thing {i} {j}");
                         pings[id]
                             .Add(new PlayerEventNotificationInfo()
                             {
@@ -363,7 +414,7 @@ public class bank : NetworkBehaviour
 
     private void ProcessEvents()
     {
-        if (gameStart.Value < 0) return;
+        if (gameState.Value.gameStartTime < 0) return;
         
         var time = Time.time;
         for (int i = 0; i < (int)GoodType.NumGoodType; i++)

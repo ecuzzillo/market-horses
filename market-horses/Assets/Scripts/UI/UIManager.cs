@@ -18,6 +18,9 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
+    public float dayPercentageLastUpdated;
+
+    public bool localMarketOpenNow;
     
     public UIDocument document;
     public NetworkManager networkManager;
@@ -50,6 +53,7 @@ public class UIManager : MonoBehaviour
         Instance = this;
 
         events = new List<VisualEventInfo>();
+        dayPercentageLastUpdated = -5;
 
         document = GetComponent<UIDocument>();
 
@@ -114,10 +118,13 @@ public class UIManager : MonoBehaviour
         {
             var button = (element as Button);
             button.text = "TRADE";
-            button.clicked -=
-                () => ShowTradeWithPlayerView(index);
-            button.clicked +=
-                () => ShowTradeWithPlayerView(index);
+            Action cb = () =>
+            {
+                if (bank.Instance.gameState.Value.marketOpenNow)
+                    ShowTradeWithPlayerView(index);
+            };
+            button.clicked -= cb;
+            button.clicked += cb;
         };
         
         mclv = document.rootVisualElement.Q<MultiColumnListView>("mclv");
@@ -244,10 +251,31 @@ public class UIManager : MonoBehaviour
             localPlayerFreeCashLabel.text = bank.Instance.playerFreeCash[localPlayerIdx].ToString();
             localPlayerNetWorthLabel.text = ComputePlayerNetWorth(localPlayerIdx).ToString();
 
-            var gameStartValue = bank.Instance.gameStart.Value;
-            if (gameStartValue >= 0)
+            var gameState = bank.Instance.gameState.Value;
+            var now = Time.time;
+
+            var marketChanged = (localMarketOpenNow != gameState.marketOpenNow);
+            if (marketChanged || (gameState.gameStartTime >= 0 && now - dayPercentageLastUpdated > bank.Instance.SecondsBetweenClockUIUpdates)) 
             {
-                clockLabel.text = ((int)(Time.time - gameStartValue)).ToString();
+                if (marketChanged)
+                {
+                    localMarketOpenNow = gameState.marketOpenNow;
+                    if (localMarketOpenNow)
+                        mclv.style.opacity = 1f;
+                    else
+                        mclv.style.opacity = .28f;
+                }
+                
+                if (gameState.marketOpenNow)
+                    clockLabel.text =
+                        $"D{gameState.dayNumber} {(int)gameState.secondsUntilMarketToggles}s until close";
+                else
+                {
+                    clockLabel.text =
+                        $"D{gameState.dayNumber} {(int)gameState.secondsUntilMarketToggles}s until open";
+                }
+
+                dayPercentageLastUpdated = now;
             }
             
             twps.MyUpdate();

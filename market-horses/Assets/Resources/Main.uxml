@@ -1,8 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Style.uss?fileID=7433441132597879392&amp;guid=66ce8e2964a884904999f9b2a36e87d4&amp;type=3#Style" />
-    <ui:VisualElement name="game-screen" style="flex-grow: 1; background-color: rgba(255, 255, 255, 0); display: flex; justify-content: space-between; height: 459px; width: 353px;">
+    <ui:VisualElement name="game-screen" style="flex-grow: 1; background-color: rgba(255, 255, 255, 0); display: flex; justify-content: space-between; height: 459px; width: 390px;">
         <ui:VisualElement name="header" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); height: -882px; width: auto; max-height: 50px; flex-direction: row; align-items: center; justify-content: space-around; min-width: auto;">
-            <ui:Label tabindex="-1" text="Time:" display-tooltip-when-elided="true" name="time-label" />
             <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="clock" />
             <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; min-width: 20%; justify-content: space-around; width: 30%; max-width: 40%; border-right-width: 1px; border-left-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);">
                 <ui:Label tabindex="-1" text="Free cash:" display-tooltip-when-elided="true" />
@@ -29,7 +28,7 @@
             <ui:Label text="News Ticker" display-tooltip-when-elided="true" style="align-items: auto; -unity-text-align: upper-center;" />
             <ui:ListView focusable="true" name="ticker-list" />
         </ui:VisualElement>
-        <ui:VisualElement name="goods-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); justify-content: flex-start; display: flex;">
+        <ui:VisualElement name="goods-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); justify-content: flex-start; display: flex; visibility: visible; opacity: 1;">
             <ui:Label tabindex="-1" text="Goods" display-tooltip-when-elided="true" style="-unity-text-align: upper-center;" />
             <ui:VisualElement name="goods-list" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); justify-content: flex-start;">
                 <ui:MultiColumnListView name="mclv" fixed-item-height="40" style="flex-direction: row; justify-content: space-between;">

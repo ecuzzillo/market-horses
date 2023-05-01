@@ -33,7 +33,7 @@ public class TradeWithPlayerScreen
     //[SerializeField]
     public Texture2D xmark;
 
-    [FormerlySerializedAs("offersForMe")] public List<int> offerIdxsForMe;
+    public List<int> offerIdxsForMe;
 
     public void Init()
     {

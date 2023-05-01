@@ -250,6 +250,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f265a821128434555876642b2a8f878f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dayPercentageLastUpdated: 0
+  localMarketOpenNow: 0
   document: {fileID: 0}
   networkManager: {fileID: 128620026}
   localPlayerName: 
@@ -259,6 +261,7 @@ MonoBehaviour:
     goodToTrade: 0
     checkMark: {fileID: 2800000, guid: e859b32122131af4fafca67ee2fb70e8, type: 3}
     xmark: {fileID: 2800000, guid: 64fe4d6402bd13943acfa196b8186a86, type: 3}
+    offerIdxsForMe: 
   goodToTrade: 0
 --- !u!114 &256345111
 MonoBehaviour:
@@ -574,18 +577,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fad4fbbce67f7314f93f1de237dd50ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health:
-    m_InternalValue: 0
   PriceChangeAmount: 1
   PlayerStartingCash: 100
   PlayerStartingGoodsValue: 200
-  counter: 0
-  networkManager: {fileID: 128620026}
-  myID: 0
-  playerPrefab: {fileID: 0}
-  gameStart:
-    m_InternalValue: 0
-  probabilityOfTellingPlayerAboutAGivenEvent: 0.95
+  probabilityOfTellingPlayerAboutAGivenEvent: 0.33
+  SecondsOfOpenMarketPerDay: 10
+  SecondsOfClosedMarketPerNight: 5
+  SecondsBetweenClockUIUpdates: 2
+  gameState:
+    m_InternalValue:
+      dayNumber: 0
+      marketOpenNow: 0
+      gameStartTime: 0
+      secondsUntilMarketToggles: 0
+  nextGuid: 0
 --- !u!1 &5186279430621136993
 GameObject:
   m_ObjectHideFlags: 0
