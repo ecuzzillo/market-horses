@@ -65,7 +65,7 @@ public class Player : NetworkBehaviour
                 return;
             }
             added = true;
-            CmdAddPlayerInfoServerRpc();
+            CmdAddPlayerInfoServerRpc(UIManager.Instance.localPlayerName);
         }
     }
 
@@ -76,10 +76,10 @@ public class Player : NetworkBehaviour
     }
 
     [ServerRpc]
-    void CmdAddPlayerInfoServerRpc()
+    void CmdAddPlayerInfoServerRpc(string playerName)
     {
         Debug.Log("trying to add player info for " + id);
-        FindAnyObjectByType<bank>().AddPlayerInfo(id, UIManager.Instance.localPlayerName);
+        FindAnyObjectByType<bank>().AddPlayerInfo(id, playerName);
     }
 
     [ServerRpc]
