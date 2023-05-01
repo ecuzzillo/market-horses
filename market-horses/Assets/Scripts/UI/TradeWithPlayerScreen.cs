@@ -111,7 +111,8 @@ public class TradeWithPlayerScreen
                 OffereePlayerId = bank.Instance.playerIds[PlayerIdx],
                 OfferingPlayerId = Player.LocalPlayerId(),
                 OfferToBuy = twpsIsBuying,
-                price = Single.Parse(PriceField.text)
+                price = Single.Parse(PriceField.text),
+                guid = bank.Instance.nextGuid++
             };
 
             bank.Instance.allOffers.Add(newoffer);
@@ -153,15 +154,12 @@ public class TradeWithPlayerScreen
         };
         receivedOffersListView.columns["accept"].bindCell = (element, i) =>
         {
-            /*var cb = () =>
-                {
-                    offersForMe[i].    
-                }*/
             var btn = (element as Button);
             btn.text = "Yes";
+            var thisguid = bank.Instance.allOffers[offerIdxsForMe[i]].guid;
             Action cb = () =>
             {
-                bank.Instance.ConsummateDealServerRpc(offerIdxsForMe[i]);
+                bank.Instance.ConsummateDealServerRpc(thisguid);
                 UpdateOfferViewShitBasedOnBank();
             };
             btn.clicked -= cb;
@@ -171,16 +169,24 @@ public class TradeWithPlayerScreen
         {
             var btn = (element as Button);
             btn.text = "No";
+            var thisguid = bank.Instance.allOffers[offerIdxsForMe[i]].guid;
             Action cb = () =>
             {
-                Debug.Log($"reject cb {i} {offerIdxsForMe}");
-                bank.Instance.allOffers.RemoveAt(offerIdxsForMe[i]);
+                for (int j = 0; j < bank.Instance.allOffers.Count; j++)
+                {
+                    if (bank.Instance.allOffers[j].guid == thisguid)
+                    {
+                        Debug.Log($"reject cb {thisguid}");
+                        bank.Instance.allOffers.RemoveAt(j);
+                        break;
+                    }
+                }
+
                 UpdateOfferViewShitBasedOnBank();
             };
             btn.clicked -= cb;
             btn.clicked += cb;         
         };
-        
     }
     
     
@@ -210,7 +216,6 @@ public class TradeWithPlayerScreen
         }
 
         receivedOffersListView.itemsSource = offerIdxsForMe;
-        Debug.Log($"calling refreshitems with length {offerIdxsForMe}");
         receivedOffersListView.RefreshItems();
     }
 }

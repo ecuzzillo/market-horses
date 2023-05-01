@@ -22,6 +22,7 @@ public struct Offer : INetworkSerializeByMemcpy, IEquatable<Offer>
     public ulong OffereePlayerId;
     public int count;
     public float price;
+    public ulong guid;
 
     public bool Equals(Offer other)
     {
@@ -30,7 +31,8 @@ public struct Offer : INetworkSerializeByMemcpy, IEquatable<Offer>
                OfferingPlayerId == other.OfferingPlayerId &&
                OffereePlayerId == other.OffereePlayerId &&
                count == other.count &&
-               price.Equals(other.price);
+               price.Equals(other.price) && 
+               guid == other.guid;
     }
 
     public override bool Equals(object obj)
@@ -40,7 +42,7 @@ public struct Offer : INetworkSerializeByMemcpy, IEquatable<Offer>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(OfferToBuy, (int)goodType, OfferingPlayerId, OffereePlayerId, count, price);
+        return guid.GetHashCode();
     }
 }
 
@@ -99,8 +101,6 @@ public struct PlayerEventNotificationInfo
 
 public class bank : NetworkBehaviour
 {
-    public NetworkVariable<int> health;
-    
     [Header("Tuning params")]
     public int PriceChangeAmount;
     public float PlayerStartingCash;
@@ -111,6 +111,8 @@ public class bank : NetworkBehaviour
     public NetworkList<ulong> playerIds;
     public NetworkList<float> playerFreeCash;
     public NetworkList<Offer> allOffers;
+    public ulong nextGuid;
+
     public int counter;
     public NetworkManager networkManager;
     public ulong myID;
@@ -220,13 +222,30 @@ public class bank : NetworkBehaviour
     }
 
     [ServerRpc]
-    public void ConsummateDealServerRpc(int offerIdx)
+    public void ConsummateDealServerRpc(ulong offerGuid)
     {
         //figure out how much good to transfer
         //figure out how much money to transfer
         //remove offer from alloffers list
         //call ui update
-        var o = allOffers[offerIdx];
+        Offer o = default;
+        o.guid = ulong.MaxValue;
+        for (int i = 0; i < allOffers.Count; i++)
+        {
+            if (allOffers[i].guid == offerGuid)
+            {
+                o = allOffers[i];
+                allOffers.RemoveAt(i);
+                break;
+            }
+        }
+
+        if (o.guid == ulong.MaxValue)
+        {
+            Debug.LogError("OH NO WE'VE BEEN FUCKED");
+            return;
+        }
+        
         var offereeIdx = Player.PlayerIdxFromId(o.OffereePlayerId);
         var offeringIdx = Player.PlayerIdxFromId(o.OfferingPlayerId);
 
@@ -261,7 +280,6 @@ public class bank : NetworkBehaviour
                 tmpbgi.playerPositions[receivingGoodsIdx] = tmppgiReceivingGoods;
 
                 goods[i] = tmpbgi;
-                allOffers.RemoveAt(offerIdx);
                 return;
             }
         }
