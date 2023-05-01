@@ -103,6 +103,8 @@ public class bank : NetworkBehaviour
     
     [Header("Tuning params")]
     public int PriceChangeAmount;
+    public int GameTimeRemaining;
+    public int GameTimeEnd;
     public float PlayerStartingCash;
     public int PlayerStartingGoodsValue;
 
@@ -136,8 +138,10 @@ public class bank : NetworkBehaviour
         gameStart = new NetworkVariable<float>();
         gameStart.Value = -1;
         allOffers = new NetworkList<Offer>();
+        GameTimeEnd = (int)Math.Round(Time.time + 12.0);
+        GameTimeRemaining = GameTimeEnd - (int)Math.Round(Time.time);
 
-        
+
         myID = GetComponent<NetworkObject>().NetworkObjectId;
         counter = 0;
     }
@@ -224,6 +228,9 @@ public class bank : NetworkBehaviour
         if (goods.Count == 0) return;
 
         ProcessEvents();
+        Debug.Log($"Time remaining is: {GameTimeRemaining}");
+        GameTimeRemaining = GameTimeEnd - (int)Math.Round(Time.time);
+
 
         if (gameStart.Value > 0)
         {

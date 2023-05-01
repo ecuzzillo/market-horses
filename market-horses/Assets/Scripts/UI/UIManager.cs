@@ -30,6 +30,7 @@ public class UIManager : MonoBehaviour
     public VisualElement goodsSection;
     public VisualElement tradeSection;
     public VisualElement gameScreen;
+    public VisualElement gameEndModal;
     
     
     public VisualElement tradeWithPlayerSection;
@@ -223,6 +224,9 @@ public class UIManager : MonoBehaviour
             bank.Instance.allOffers.Add(newoffer);
             tradeWithPlayerSection.style.display = DisplayStyle.None;
         });
+
+        gameEndModal = document.rootVisualElement.Q<VisualElement>("GameEndModal");
+        gameEndModal.style.display = DisplayStyle.None;
     }
 
     public void UpdateForNewPlayer()
@@ -270,6 +274,17 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
+        if (bank.Instance.GameTimeRemaining == 0){
+            gameEndModal.style.display = DisplayStyle.Flex;
+            // playerIds = new NetworkList<ulong>();
+            // networths = [];
+
+            // for (int x=0; i< playerIds.Length; x++){
+            //     networths.add(ComputePlayerNetWorth(playerIds[x]));
+            // }
+        }
+
+
         if (bank.Instance.IsSpawned && bank.Instance.goods.Count > 0)
         {
             var shitlist = new List<BankGoodInfo>();
