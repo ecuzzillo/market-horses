@@ -1,6 +1,10 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Style.uss?fileID=7433441132597879392&amp;guid=66ce8e2964a884904999f9b2a36e87d4&amp;type=3#Style" />
     <ui:VisualElement name="game-screen" style="flex-grow: 1; background-color: rgba(255, 255, 255, 0); display: flex; justify-content: space-between; height: 459px; width: 353px;">
+        <ui:VisualElement name="GameEndModal" style="flex-grow: 1; background-color: rgba(181, 0, 0, 0.23); position: absolute; height: 96px; width: 180px; top: 202px; left: 66px; -unity-text-outline-width: 5px; -unity-text-outline-color: rgb(0, 0, 0); border-left-width: 2px; border-right-width: 2px; border-top-width: 2px; border-bottom-width: 2px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); visibility: visible; opacity: 1;">
+            <ui:Label tabindex="-1" text="THE GAME HAS ENDED" display-tooltip-when-elided="true" name="GameEndModalStaticText" style="display: flex; position: absolute; top: 23px; left: 6px; -unity-text-outline-width: 0; opacity: 1; visibility: visible;" />
+            <ui:Label tabindex="-1" text="GAME END placeholder" display-tooltip-when-elided="true" name="GameEndModalText" style="display: flex; position: absolute; top: 46px; left: 5px; -unity-text-outline-width: 0; opacity: 1; visibility: visible;" />
+        </ui:VisualElement>
         <ui:VisualElement name="header" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); height: -882px; width: auto; max-height: 50px; flex-direction: row; align-items: center; justify-content: space-around; min-width: auto;">
             <ui:Label tabindex="-1" text="Time:" display-tooltip-when-elided="true" name="time-label" />
             <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="clock" />
@@ -14,6 +18,10 @@
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:Button text="Start Game" display-tooltip-when-elided="true" name="start-game-button" />
+        <ui:VisualElement name="ticker-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); display: none;">
+            <ui:Label text="News Ticker" display-tooltip-when-elided="true" style="align-items: auto; -unity-text-align: upper-center;" />
+            <ui:ListView focusable="true" name="ticker-list" />
+        </ui:VisualElement>
         <ui:VisualElement name="managers-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: stretch; justify-content: flex-start; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 1px; border-bottom-width: 1px;">
             <ui:Label tabindex="-1" text="Fund Managers" display-tooltip-when-elided="true" name="Label" style="-unity-text-align: upper-center;" />
             <ui:MultiColumnListView name="player-list" fixed-item-height="40" style="flex-direction: row; justify-content: space-between;">
@@ -24,10 +32,6 @@
                     <ui:Column name="trade" stretchable="true" />
                 </ui:Columns>
             </ui:MultiColumnListView>
-        </ui:VisualElement>
-        <ui:VisualElement name="ticker-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); display: none;">
-            <ui:Label text="News Ticker" display-tooltip-when-elided="true" style="align-items: auto; -unity-text-align: upper-center;" />
-            <ui:ListView focusable="true" name="ticker-list" />
         </ui:VisualElement>
         <ui:VisualElement name="goods-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); justify-content: flex-start; display: flex;">
             <ui:Label tabindex="-1" text="Goods" display-tooltip-when-elided="true" style="-unity-text-align: upper-center;" />
@@ -44,13 +48,16 @@
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="trade-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; justify-content: space-around; display: flex;">
-            <ui:Button text="Buy" display-tooltip-when-elided="true" name="buy-button" />
-            <ui:Label tabindex="-1" text="Price" display-tooltip-when-elided="true" name="trade-price-label" style="-unity-text-align: upper-left; position: absolute; top: 40px; left: 90px;" />
-            <ui:Label tabindex="-1" text="Pos" display-tooltip-when-elided="true" name="trade-position" style="position: absolute; top: 43px; left: 128px;" />
-            <ui:Label tabindex="-1" text="Price" display-tooltip-when-elided="true" name="trade-price-label" style="position: absolute; top: 7px; left: 92px;" />
-            <ui:Button text="Sell" display-tooltip-when-elided="true" name="sell-button" />
-            <ui:Button text="X" display-tooltip-when-elided="true" name="exit-button" />
-            <ui:Label tabindex="-1" text="Pos" display-tooltip-when-elided="true" name="trade-price-label" style="position: absolute; top: 7px; left: 124px; width: 28px;" />
+            <ui:Button text="Buy" display-tooltip-when-elided="true" name="buy-button" style="position: absolute; top: -162px; left: 14px; height: 358px; width: 63px;" />
+            <ui:Label tabindex="-1" text="Price" display-tooltip-when-elided="true" name="trade-price-label" style="-unity-text-align: upper-left; position: absolute; top: -118px; left: 91px;" />
+            <ui:Label tabindex="-1" text="Pos" display-tooltip-when-elided="true" name="trade-position" style="position: absolute; top: -118px; left: 195px;" />
+            <ui:Label tabindex="-1" text="Price" display-tooltip-when-elided="true" name="trade-price-label" style="position: absolute; top: -154px; left: 87px;" />
+            <ui:Button text="Sell" display-tooltip-when-elided="true" name="sell-button" style="position: absolute; top: -154px; left: 264px; height: 348px; width: 72px;" />
+            <ui:Button text=" " display-tooltip-when-elided="true" name="exit-button" style="position: absolute; top: 22px; left: 138px; height: 54px; width: 52px;">
+                <ui:Label tabindex="-1" text="Cancel" display-tooltip-when-elided="true" name="cancel-label" style="position: absolute; top: 21px; left: 4px; width: 38px; height: 25px;" />
+                <ui:Label tabindex="-1" text="X" display-tooltip-when-elided="true" name="cancel-label" style="position: absolute; top: 3px; left: 4px; width: 38px; height: 25px; font-size: 20px;" />
+            </ui:Button>
+            <ui:Label tabindex="-1" text="Pos" display-tooltip-when-elided="true" name="trade-price-label" style="position: absolute; top: -154px; left: 195px; width: 28px; height: 25px;" />
         </ui:VisualElement>
         <ui:VisualElement name="trade-with-player-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: center; justify-content: flex-start; display: none; align-self: stretch;">
             <ui:VisualElement name="TopRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-width: 390px; max-height: 40px; min-width: 0;">
