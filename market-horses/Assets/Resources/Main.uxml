@@ -1,10 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Style.uss?fileID=7433441132597879392&amp;guid=66ce8e2964a884904999f9b2a36e87d4&amp;type=3#Style" />
     <ui:VisualElement name="game-screen" style="flex-grow: 1; background-color: rgba(255, 255, 255, 0); display: flex; justify-content: space-between; height: 459px; width: 390px;">
-        <ui:VisualElement name="GameEndModal" style="flex-grow: 1; background-color: rgba(181, 0, 0, 0.23); position: absolute; height: 96px; width: 180px; top: 202px; left: 66px; -unity-text-outline-width: 5px; -unity-text-outline-color: rgb(0, 0, 0); border-left-width: 2px; border-right-width: 2px; border-top-width: 2px; border-bottom-width: 2px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); visibility: visible; opacity: 1;">
-            <ui:Label tabindex="-1" text="THE GAME HAS ENDED" display-tooltip-when-elided="true" name="GameEndModalStaticText" style="display: flex; position: absolute; top: 23px; left: 6px; -unity-text-outline-width: 0; opacity: 1; visibility: visible;" />
-            <ui:Label tabindex="-1" text="GAME END placeholder" display-tooltip-when-elided="true" name="GameEndModalText" style="display: flex; position: absolute; top: 46px; left: 5px; -unity-text-outline-width: 0; opacity: 1; visibility: visible;" />
-        </ui:VisualElement>
         <ui:VisualElement name="header" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); height: -882px; width: auto; max-height: 50px; flex-direction: row; align-items: center; justify-content: space-around; min-width: auto;">
             <ui:Label tabindex="-1" display-tooltip-when-elided="true" name="clock" />
             <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; min-width: 20%; justify-content: space-around; width: 30%; max-width: 40%; border-right-width: 1px; border-left-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);">
@@ -95,9 +91,13 @@
     </ui:VisualElement>
     <ui:VisualElement name="start-screen" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: center; justify-content: space-around; flex-direction: column; display: none;">
         <ui:Label tabindex="-1" text="MARKET HORSES" display-tooltip-when-elided="true" name="title" style="font-size: 35px; -unity-font-style: bold;" />
-        <ui:TextField picking-mode="Ignore" label="IP to connect to:" name="ip-address-field" />
+        <ui:TextField picking-mode="Ignore" label="IP to connect to:" name="ip-address-field" value="127.0.0.1" />
         <ui:TextField picking-mode="Ignore" label="Enter name:" value="elliot" name="name-field" style="justify-content: center; align-items: stretch;" />
         <ui:Button text="Join Game" display-tooltip-when-elided="true" name="join-game-button" />
         <ui:Button text="Host Game" display-tooltip-when-elided="true" name="host-game-button" />
+    </ui:VisualElement>
+    <ui:VisualElement name="GameEndModal" style="flex-grow: 1; background-color: rgba(181, 0, 0, 0.23); position: absolute; height: 100%; width: 100%; top: 0; left: 0; -unity-text-outline-width: 5px; -unity-text-outline-color: rgb(0, 0, 0); border-left-width: 2px; border-right-width: 2px; border-top-width: 2px; border-bottom-width: 2px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); visibility: visible; opacity: 1; display: none;">
+        <ui:Label tabindex="-1" text="THE GAME HAS ENDED" display-tooltip-when-elided="true" name="game-end-static-text" style="display: flex; position: absolute; top: 23px; left: 6px; -unity-text-outline-width: 0; opacity: 1; visibility: visible;" />
+        <ui:Label tabindex="-1" text="GAME END placeholder" display-tooltip-when-elided="true" name="game-end-main-text" style="display: flex; position: absolute; top: 46px; left: 5px; -unity-text-outline-width: 0; opacity: 1; visibility: visible;" />
     </ui:VisualElement>
 </ui:UXML>

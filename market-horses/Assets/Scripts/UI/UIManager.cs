@@ -223,17 +223,6 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if (bank.Instance.GameTimeRemaining == 0){
-            gameEndModal.style.display = DisplayStyle.Flex;
-            // playerIds = new NetworkList<ulong>();
-            // networths = [];
-
-            // for (int x=0; i< playerIds.Length; x++){
-            //     networths.add(ComputePlayerNetWorth(playerIds[x]));
-            // }
-        }
-
-
         if (bank.Instance.IsSpawned && bank.Instance.goods.Count > 0)
         {
             var shitlist = new List<BankGoodInfo>();
@@ -269,30 +258,62 @@ public class UIManager : MonoBehaviour
             var gameState = bank.Instance.gameState.Value;
             var now = Time.time;
 
-            var marketChanged = (localMarketOpenNow != gameState.marketOpenNow);
-            if (marketChanged || (gameState.gameStartTime >= 0 && now - dayPercentageLastUpdated > bank.Instance.SecondsBetweenClockUIUpdates)) 
+            if (gameState.dayNumber == bank.Instance.NumberOfDaysInGame)
             {
-                if (marketChanged)
+                // game over man
+                gameEndModal.style.display = DisplayStyle.Flex;
+                gameScreen.style.display = DisplayStyle.None;
+
+                var txt = gameEndModal.Q<Label>("game-end-main-text");
+                txt.text = @"Ending net worth by player:\n";
+
+                var networths = new List<float>();
+                for (int i = 0; i < bank.Instance.playerIds.Count; i++)
                 {
-                    localMarketOpenNow = gameState.marketOpenNow;
-                    if (localMarketOpenNow)
-                        mclv.style.opacity = 1f;
-                    else
-                        mclv.style.opacity = .28f;
-                }
-                
-                if (gameState.marketOpenNow)
-                    clockLabel.text =
-                        $"D{gameState.dayNumber} {(int)gameState.secondsUntilMarketToggles}s until close";
-                else
-                {
-                    clockLabel.text =
-                        $"D{gameState.dayNumber} {(int)gameState.secondsUntilMarketToggles}s until open";
+                    networths.Add(ComputePlayerNetWorth(i));
                 }
 
-                dayPercentageLastUpdated = now;
+                var sortedIndices = networths.Select((x, i) => new KeyValuePair<float, int>(x, i))
+                    .OrderBy(x => -x.Key)
+                    .ToList();
+
+                for (int i = 0; i < sortedIndices.Count; i++)
+                {
+                    txt.text += $"{bank.Instance.playerNames[sortedIndices[i].Value]}: ${sortedIndices[i].Key}";
+                }
+
+                txt.text += $"Congratulations!";
             }
-            
+            else
+            {
+
+                var marketChanged = (localMarketOpenNow != gameState.marketOpenNow);
+                if (marketChanged ||
+                    (gameState.gameStartTime >= 0 &&
+                     now - dayPercentageLastUpdated > bank.Instance.SecondsBetweenClockUIUpdates))
+                {
+                    if (marketChanged)
+                    {
+                        localMarketOpenNow = gameState.marketOpenNow;
+                        if (localMarketOpenNow)
+                            mclv.style.opacity = 1f;
+                        else
+                            mclv.style.opacity = .28f;
+                    }
+
+                    if (gameState.marketOpenNow)
+                        clockLabel.text =
+                            $"D{gameState.dayNumber} {(int)gameState.secondsUntilMarketToggles}s until close";
+                    else
+                    {
+                        clockLabel.text =
+                            $"D{gameState.dayNumber} {(int)gameState.secondsUntilMarketToggles}s until open";
+                    }
+
+                    dayPercentageLastUpdated = now;
+                }
+            }
+
             twps.MyUpdate();
         }
     }

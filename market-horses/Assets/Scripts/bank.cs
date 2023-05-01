@@ -134,14 +134,13 @@ public class bank : NetworkBehaviour
 {
     [Header("Tuning params")]
     public int PriceChangeAmount;
-    public int GameTimeRemaining;
-    public int GameTimeEnd;
     public float PlayerStartingCash;
     public int PlayerStartingGoodsValue;
     public float probabilityOfTellingPlayerAboutAGivenEvent;
     public float SecondsOfOpenMarketPerDay;
     public float SecondsOfClosedMarketPerNight;
     public float SecondsBetweenClockUIUpdates;
+    public int NumberOfDaysInGame;
 
     [Header("Network stuff")]
     public NetworkList<BankGoodInfo> goods;
@@ -165,6 +164,7 @@ public class bank : NetworkBehaviour
 
     void Start()
     {
+        Screen.SetResolution(390, 844, false);
         goods = new NetworkList<BankGoodInfo>();
         playerNames = new NetworkList<FixedString128Bytes>();
         playerIds = new NetworkList<ulong>();
@@ -320,22 +320,8 @@ public class bank : NetworkBehaviour
         if (!IsOwner) return;
 
         if (goods.Count == 0) return;
-        
-        
-        /*
- * on server / bank side, divide time by length of day + night, figure out what day it is, and if we've changed what
- * phase we're in, grey out or un grey out the buttons, and update what day it is.
- *
- * also, for all the event text, start specifying a day instead of a number of seconds.
- * 
-*/
-        
-        
 
         ProcessEvents();
-        Debug.Log($"Time remaining is: {GameTimeRemaining}");
-        GameTimeRemaining = GameTimeEnd - (int)Math.Round(Time.time);
-
 
         var gameStateV = gameState.Value;
         if (gameStateV.gameStartTime > 0)
@@ -353,7 +339,7 @@ public class bank : NetworkBehaviour
                 : (dayLength - secondsInDaySoFar);
 
             gameState.Value = gameStateV;
-            
+
             foreach (var (k, v) in pings)
             {
                 for (int i = v.Count - 1; i >= 0; i--)
@@ -475,7 +461,7 @@ public class bank : NetworkBehaviour
             }
         }
 
-        throw new Exception("Player position not found");
+        throw new Exception($"Player position not found for playerid {playerId}");
     }
 
     [ServerRpc]
