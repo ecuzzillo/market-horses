@@ -134,6 +134,8 @@ public class bank : NetworkBehaviour
 {
     [Header("Tuning params")]
     public int PriceChangeAmount;
+    public int GameTimeRemaining;
+    public int GameTimeEnd;
     public float PlayerStartingCash;
     public int PlayerStartingGoodsValue;
     public float probabilityOfTellingPlayerAboutAGivenEvent;
@@ -331,6 +333,9 @@ public class bank : NetworkBehaviour
         
 
         ProcessEvents();
+        Debug.Log($"Time remaining is: {GameTimeRemaining}");
+        GameTimeRemaining = GameTimeEnd - (int)Math.Round(Time.time);
+
 
         var gameStateV = gameState.Value;
         if (gameStateV.gameStartTime > 0)
