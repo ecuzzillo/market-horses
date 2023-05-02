@@ -103,4 +103,15 @@ public class Player : NetworkBehaviour
         UIManager.Instance.startGameButton.style.display = DisplayStyle.None;
         UIManager.Instance.tickerSection.style.display = DisplayStyle.Flex;
     }
+    
+    [ClientRpc]
+    public void GetEventPingClientRpc(ulong playerId, GoodType goodType, EventInfo e)
+    {
+        var localPlayerId = LocalPlayerId();
+        if (playerId == localPlayerId)
+        {
+            UIManager.Instance.events.Add(new VisualEventInfo { info = e, ReceivedTime = Time.time, type = goodType });
+            UIManager.Instance.tickerView.RefreshItems();
+        }
+    }
 }

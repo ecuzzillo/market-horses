@@ -212,17 +212,6 @@ public class UIManager : MonoBehaviour
         return ret;
     }
 
-    [ClientRpc]
-    public void GetEventPingClientRpc(ulong playerId, GoodType goodType, EventInfo e)
-    {
-        var localPlayerId = Player.LocalPlayerId();
-        if (playerId == localPlayerId)
-        {
-            events.Add(new VisualEventInfo { info = e, ReceivedTime = Time.time, type = goodType });
-            tickerView.RefreshItems();
-        }
-    }
-
     private void Update()
     {
         if (bank.Instance.IsSpawned &&

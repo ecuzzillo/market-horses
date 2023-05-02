@@ -342,6 +342,8 @@ public class bank : NetworkBehaviour
 
             gameState.Value = gameStateV;
 
+            var players = FindObjectsByType<Player>(FindObjectsSortMode.None);
+
             foreach (var (k, v) in pings)
             {
                 for (int i = v.Count - 1; i >= 0; i--)
@@ -350,7 +352,9 @@ public class bank : NetworkBehaviour
                     var eventInfo = goods[(int)entry.goodType].eventsForThisGood[entry.eventIdx];
                     if (eventInfo.secondsFromStart - entry.notificationLeadTime < timeSinceStartAsOfnow)
                     {
-                        UIManager.Instance.GetEventPingClientRpc(k, entry.goodType, eventInfo);
+                        foreach (var p in players)
+                            if (p.id == k)
+                                p.GetEventPingClientRpc(k, entry.goodType, eventInfo);
                         v.RemoveAt(i);
                     }
 
