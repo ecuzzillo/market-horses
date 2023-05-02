@@ -271,7 +271,8 @@ public class bank : NetworkBehaviour
 
         if (o.guid == ulong.MaxValue)
         {
-            Debug.LogError("OH NO WE'VE BEEN FUCKED");
+            //this actually happens a fair bit, and i guess it's not a problem because our guid scheme saved us
+            //Debug.LogError("OH NO WE'VE BEEN FUCKED");
             return;
         }
         

@@ -185,6 +185,7 @@ public class UIManager : MonoBehaviour
     {
         twps.PlayerIdx = playerIdx;
 
+        twps.PlayerDropDown.index = playerIdx;
         twps.tradeWithPlayerSection.style.display = DisplayStyle.Flex;
         managersSection.style.display = DisplayStyle.None;
     }

@@ -160,7 +160,7 @@ public class TradeWithPlayerScreen
         receivedOffersListView.columns["accept"].bindCell = (element, i) =>
         {
             var btn = (element as Button);
-            btn.text = "Yes";
+            btn.text = "Y";
             var thisguid = bank.Instance.allOffers[offerIdxsForMe[i]].guid;
             Action cb = () =>
             {
@@ -173,7 +173,7 @@ public class TradeWithPlayerScreen
         receivedOffersListView.columns["reject"].bindCell = (element, i) =>
         {
             var btn = (element as Button);
-            btn.text = "No";
+            btn.text = "N";
             var thisguid = bank.Instance.allOffers[offerIdxsForMe[i]].guid;
             Action cb = () =>
             {
