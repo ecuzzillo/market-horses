@@ -115,7 +115,8 @@ public class TradeWithPlayerScreen
                 guid = bank.Instance.nextGuid++
             };
 
-            bank.Instance.allOffers.Add(newoffer);
+            
+            bank.Instance.AddNewOfferServerRpc(newoffer);
             uim.HideTradeWithPlayerView();
         });
         
