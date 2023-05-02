@@ -547,10 +547,5 @@ public class bank : NetworkBehaviour
             }
         }
     }
-
-    [ServerRpc]
-    public void AddNewOfferServerRpc(Offer newoffer)
-    {
-        bank.Instance.allOffers.Add(newoffer);
-    }
+    
 }

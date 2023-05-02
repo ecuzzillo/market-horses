@@ -82,6 +82,13 @@ public class Player : NetworkBehaviour
         Debug.Log("trying to add player info for " + id);
         FindAnyObjectByType<bank>().AddPlayerInfo(id, playerName);
     }
+    
+    // this has to be on the player because the client has to own the object it calls serverrpc's on    
+    [ServerRpc]
+    public void AddNewOfferServerRpc(Offer newoffer)
+    {
+        bank.Instance.allOffers.Add(newoffer);
+    }
 
     [ServerRpc]
     public void CmdBuyStockServerRpc(GoodType type, int inc)

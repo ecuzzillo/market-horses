@@ -116,7 +116,7 @@ public class TradeWithPlayerScreen
             };
 
             
-            bank.Instance.AddNewOfferServerRpc(newoffer);
+            Player.LocalPlayer().AddNewOfferServerRpc(newoffer);
             uim.HideTradeWithPlayerView();
         });
         
