@@ -58,7 +58,7 @@ public enum GoodType
 }
 
 [Serializable]
-public struct EventInfo
+public struct EventInfo : INetworkSerializeByMemcpy
 {
     public int quantity;
     public int secondsFromStart;
