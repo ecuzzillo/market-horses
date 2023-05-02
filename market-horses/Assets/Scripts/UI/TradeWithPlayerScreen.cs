@@ -89,7 +89,7 @@ public class TradeWithPlayerScreen
                 if (bank.Instance.playerNames[i].ToString().Equals(evt.newValue))
                 {
                     PlayerIdx = i;
-                    break;
+                    return;
                 }
             }
 

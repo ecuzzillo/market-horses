@@ -66,6 +66,7 @@ public class Player : NetworkBehaviour
             }
             added = true;
             CmdAddPlayerInfoServerRpc(UIManager.Instance.localPlayerName);
+            UIManager.Instance.UpdateForNewPlayer();
         }
     }
 

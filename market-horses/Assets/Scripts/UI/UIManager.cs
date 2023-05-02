@@ -223,7 +223,9 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if (bank.Instance.IsSpawned && bank.Instance.goods.Count > 0)
+        if (bank.Instance.IsSpawned &&
+            bank.Instance.goods.Count > 0 &&
+            bank.Instance.playerIds.Contains(Player.LocalPlayerId())) 
         {
             var shitlist = new List<BankGoodInfo>();
 
@@ -279,7 +281,7 @@ public class UIManager : MonoBehaviour
 
                 for (int i = 0; i < sortedIndices.Count; i++)
                 {
-                    txt.text += $"{bank.Instance.playerNames[sortedIndices[i].Value]}: ${sortedIndices[i].Key}";
+                    txt.text += $"{bank.Instance.playerNames[sortedIndices[i].Value]}: ${sortedIndices[i].Key}\n";
                 }
 
                 txt.text += $"Congratulations!";
