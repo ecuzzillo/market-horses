@@ -213,7 +213,8 @@ public class bank : NetworkBehaviour
                 var myevent = new EventInfo();
                 var type = Random.Range(0, ((int)GoodType.NumGoodType - 1));
                 myevent.quantity = Random.Range(-100, 100);
-                myevent.secondsFromStart = Random.Range(0, 120);
+                myevent.secondsFromStart = Random.Range(5,
+                    (int)(NumberOfDaysInGame * (SecondsOfOpenMarketPerDay + SecondsOfClosedMarketPerNight)));
                 var tmp = goods[type];
                 tmp.eventsForThisGood.Add(myevent);
                 goods[type] = tmp;
@@ -395,7 +396,11 @@ public class bank : NetworkBehaviour
                             {
                                 eventIdx = j,
                                 goodType = (GoodType)i,
-                                notificationLeadTime = Random.Range(5, 60)
+                                
+                                //this will currently lead to players being notified less about 
+                                notificationLeadTime = Random.Range(5,
+                                    (int)(NumberOfDaysInGame *
+                                          (SecondsOfOpenMarketPerDay + SecondsOfClosedMarketPerNight)))
                             });
                     }
                 }
