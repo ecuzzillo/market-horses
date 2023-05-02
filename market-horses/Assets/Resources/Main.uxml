@@ -58,7 +58,7 @@
             <ui:VisualElement name="TabRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-height: 40px;">
                 <ui:Button text="Make Offer" display-tooltip-when-elided="true" name="make-offer" style="background-image: none;" />
                 <ui:Button text="Receive Offers" display-tooltip-when-elided="true" name="receive-offers" />
-                <ui:Button text="X" display-tooltip-when-elided="true" name="X" />
+                <ui:Button text="X" display-tooltip-when-elided="true" name="x-button" />
             </ui:VisualElement>
             <ui:VisualElement name="make-offer-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); display: none;">
                 <ui:VisualElement name="TopRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-width: 390px; max-height: 40px; min-width: 0;">
