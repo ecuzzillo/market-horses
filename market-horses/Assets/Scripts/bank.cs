@@ -406,6 +406,12 @@ public class bank : NetworkBehaviour
                 }
             }
         }
+
+        foreach (var p in FindObjectsByType<Player>(FindObjectsSortMode.None))
+        {
+            p.StartGameOnClientRpc();
+        }
+        
     }
 
 

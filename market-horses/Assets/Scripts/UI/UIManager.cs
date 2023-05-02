@@ -363,8 +363,7 @@ public class UIManager : MonoBehaviour
     public void OnStartGameClick(ClickEvent evt)
     {
         bank.Instance.GenerateEventsForGameServerRpc();
-        startGameButton.style.display = DisplayStyle.None;
-        tickerSection.style.display = DisplayStyle.Flex;
+        
     }
 
     private void ExitStartScreen()

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UIElements;
 
 public class Player : NetworkBehaviour
 {
@@ -94,5 +95,12 @@ public class Player : NetworkBehaviour
     public void CmdBuyStockServerRpc(GoodType type, int inc)
     {
         bank.Instance.BuyStockServerRpc(type, id, inc);
+    }
+    
+    [ClientRpc]
+    public void StartGameOnClientRpc()
+    {
+        UIManager.Instance.startGameButton.style.display = DisplayStyle.None;
+        UIManager.Instance.tickerSection.style.display = DisplayStyle.Flex;
     }
 }
