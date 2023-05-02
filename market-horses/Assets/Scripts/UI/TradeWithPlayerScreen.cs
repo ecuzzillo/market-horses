@@ -14,6 +14,7 @@ public class TradeWithPlayerScreen
     public VisualElement receiveOffersSection;
     public Button makeOfferButton;
     public Button receiveOffersButton;
+    public Button xButton;
 
     public MultiColumnListView receivedOffersListView;
     
@@ -56,6 +57,9 @@ public class TradeWithPlayerScreen
             makeOfferSection.style.display = DisplayStyle.None;
             receiveOffersSection.style.display = DisplayStyle.Flex;
         });
+
+        xButton = tradeWithPlayerSection.Q<Button>("x-button");
+        xButton.RegisterCallback<ClickEvent>(_ => UIManager.Instance.HideTradeWithPlayerView());
         
         makeOfferSection = tradeWithPlayerSection.Q<VisualElement>("make-offer-section");
         makeOfferSection.style.display = DisplayStyle.Flex;
@@ -133,7 +137,7 @@ public class TradeWithPlayerScreen
 
         receivedOffersListView.columns["player-name"].bindCell = (element, i) =>
         {
-            (element as Label).text = bank.Instance.playerNames[Player.PlayerIdxFromId(bank.Instance.allOffers[offerIdxsForMe[i]].OffereePlayerId)]
+            (element as Label).text = bank.Instance.playerNames[Player.PlayerIdxFromId(bank.Instance.allOffers[offerIdxsForMe[i]].OfferingPlayerId)]
                 .ToString();
         };
         receivedOffersListView.columns["good"].bindCell = (element, i) =>

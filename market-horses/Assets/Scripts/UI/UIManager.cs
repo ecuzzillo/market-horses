@@ -187,13 +187,11 @@ public class UIManager : MonoBehaviour
 
         twps.tradeWithPlayerSection.style.display = DisplayStyle.Flex;
         managersSection.style.display = DisplayStyle.None;
-        goodsSection.style.display = DisplayStyle.None;
     }
     public void HideTradeWithPlayerView()
     {
         twps.tradeWithPlayerSection.style.display = DisplayStyle.None;
         managersSection.style.display = DisplayStyle.Flex;
-        goodsSection.style.display = DisplayStyle.Flex;
     }
     
 
