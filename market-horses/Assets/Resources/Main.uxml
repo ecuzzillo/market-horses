@@ -42,17 +42,19 @@
                 </ui:MultiColumnListView>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="trade-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; justify-content: space-around; display: flex;">
-            <ui:Button text="Buy" display-tooltip-when-elided="true" name="buy-button" style="position: absolute; top: -162px; left: 14px; height: 358px; width: 63px;" />
-            <ui:Label tabindex="-1" text="Price" display-tooltip-when-elided="true" name="trade-price-label" style="-unity-text-align: upper-left; position: absolute; top: -118px; left: 91px;" />
-            <ui:Label tabindex="-1" text="Pos" display-tooltip-when-elided="true" name="trade-position" style="position: absolute; top: -118px; left: 195px;" />
-            <ui:Label tabindex="-1" text="Price" display-tooltip-when-elided="true" name="trade-price-label" style="position: absolute; top: -154px; left: 87px;" />
-            <ui:Button text="Sell" display-tooltip-when-elided="true" name="sell-button" style="position: absolute; top: -154px; left: 264px; height: 348px; width: 72px;" />
-            <ui:Button text=" " display-tooltip-when-elided="true" name="exit-button" style="position: absolute; top: 22px; left: 138px; height: 54px; width: 52px;">
-                <ui:Label tabindex="-1" text="Cancel" display-tooltip-when-elided="true" name="cancel-label" style="position: absolute; top: 21px; left: 4px; width: 38px; height: 25px;" />
-                <ui:Label tabindex="-1" text="X" display-tooltip-when-elided="true" name="cancel-label" style="position: absolute; top: 3px; left: 4px; width: 38px; height: 25px; font-size: 20px;" />
-            </ui:Button>
-            <ui:Label tabindex="-1" text="Pos" display-tooltip-when-elided="true" name="trade-price-label" style="position: absolute; top: -154px; left: 195px; width: 28px; height: 25px;" />
+        <ui:VisualElement name="trade-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
+            <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); max-height: 40px; flex-direction: row; align-items: center; justify-content: center;">
+                <ui:Label tabindex="-1" text="Label" display-tooltip-when-elided="true" />
+                <ui:Label tabindex="-1" text="Price" display-tooltip-when-elided="true" style="left: 27%; right: initial; position: absolute;" />
+                <ui:Label tabindex="-1" text="Position" display-tooltip-when-elided="true" />
+            </ui:VisualElement>
+            <ui:VisualElement name="trade-subsection" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; justify-content: space-around; display: flex; max-height: 40px; height: 40px;">
+                <ui:Button text="Buy" display-tooltip-when-elided="true" name="buy-button" style="position: relative; top: auto; left: auto; height: auto; width: auto;" />
+                <ui:Label tabindex="-1" text="Price" display-tooltip-when-elided="true" name="trade-price-label" style="position: relative; top: auto; left: auto;" />
+                <ui:Label tabindex="-1" text="Pos" display-tooltip-when-elided="true" name="trade-position" style="position: relative; top: auto; left: auto; width: 28px; height: 25px;" />
+                <ui:Button text="Sell" display-tooltip-when-elided="true" name="sell-button" style="position: relative; top: auto; left: auto; height: auto; width: auto;" />
+                <ui:Button text="X" display-tooltip-when-elided="true" name="exit-button" style="position: relative; top: auto; left: auto; height: auto; width: auto;" />
+            </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="trade-with-player-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: center; justify-content: flex-start; display: flex; align-self: stretch;">
             <ui:VisualElement name="TabRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-height: 40px;">

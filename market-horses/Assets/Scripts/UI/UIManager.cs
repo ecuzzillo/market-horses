@@ -241,6 +241,7 @@ public class UIManager : MonoBehaviour
                 bank.Instance.goods[(int)goodToTrade].price.ToString();
             tradeSection.Q<Label>("trade-price-label").text =
                 bank.Instance.goods[(int)goodToTrade].price.ToString();
+            tradeSection.Q<Label>("trade-good-type").text = goodToTrade.ToString();
             tradeSection.Q<Label>("trade-position").text =
                 bank.Instance.GetPlayerGoodInfo(goodToTrade, Player.LocalPlayerId()).position.ToString();
 
@@ -314,8 +315,6 @@ public class UIManager : MonoBehaviour
     public void ShowTradeView(GoodType goodType)
     {
         goodToTrade = goodType;
-        managersSection.style.display = DisplayStyle.None;
-        goodsSection.style.display = DisplayStyle.None;
         tradeSection.style.display = DisplayStyle.Flex;
     }
 
