@@ -145,9 +145,13 @@ public class bank : NetworkBehaviour
 
     [Header("Network stuff")]
     public NetworkList<BankGoodInfo> goods;
+
+    public NetworkList<BankGoodInfo> goodsAtMarketOpenToday;
     public NetworkList<FixedString128Bytes> playerNames;
     public NetworkList<ulong> playerIds;
     public NetworkList<float> playerFreeCash;
+    public NetworkList<float> playerFreeCashAtMarketOpenToday;
+    
     public NetworkList<Offer> allOffers;
     public NetworkVariable<GameStateInfo> gameState;
 
@@ -167,9 +171,11 @@ public class bank : NetworkBehaviour
     {
         Screen.SetResolution(390, 844, false);
         goods = new NetworkList<BankGoodInfo>();
+        goodsAtMarketOpenToday = new NetworkList<BankGoodInfo>();
         playerNames = new NetworkList<FixedString128Bytes>();
         playerIds = new NetworkList<ulong>();
         playerFreeCash = new NetworkList<float>();
+        playerFreeCashAtMarketOpenToday = new NetworkList<float>();
         allOffers = new NetworkList<Offer>();
         gameState = new NetworkVariable<GameStateInfo>();
         gameState.Value = new GameStateInfo()
@@ -334,7 +340,12 @@ public class bank : NetworkBehaviour
             gameStateV.dayNumber = (int)timeInDays;
             var secondsInDaySoFar = timeSinceStartAsOfnow - dayLength * gameStateV.dayNumber;
 
+            var marketWasOpen = gameStateV.marketOpenNow;
             gameStateV.marketOpenNow = secondsInDaySoFar < SecondsOfOpenMarketPerDay;
+            if (!marketWasOpen && gameStateV.marketOpenNow)
+            {
+                UpdateMarketOpenStuffs();
+            }
 
             gameStateV.secondsUntilMarketToggles = gameStateV.marketOpenNow
                 ? (SecondsOfOpenMarketPerDay - secondsInDaySoFar)
@@ -373,6 +384,7 @@ public class bank : NetworkBehaviour
             marketOpenNow = true,
             secondsUntilMarketToggles = 0
         };
+        
         var playerids = new List<ulong>();
 
         for (int i = 0; i < goods[0].playerPositions.Length; i++)
@@ -384,6 +396,8 @@ public class bank : NetworkBehaviour
         {
             pings[id] = new List<PlayerEventNotificationInfo>();
         }
+
+        UpdateMarketOpenStuffs();
 
         for (int i = 0; i < (int)GoodType.NumGoodType; i++)
         {
@@ -416,6 +430,21 @@ public class bank : NetworkBehaviour
             p.StartGameOnClientRpc();
         }
         
+    }
+
+    private void UpdateMarketOpenStuffs()
+    {
+        Debug.Log("wtf 5");
+        if (goodsAtMarketOpenToday.Count == 0)
+        {
+            for (int i = 0; i < (int)GoodType.NumGoodType; i++)
+                goodsAtMarketOpenToday.Add(goods[i]);
+        }
+        else
+        {
+            for (int i = 0; i < (int)GoodType.NumGoodType; i++)
+                goodsAtMarketOpenToday[i] = goods[i];
+        }
     }
 
 

@@ -47,12 +47,14 @@ public class UIManager : MonoBehaviour
 
     public MultiColumnListView playerListView;
     public MultiColumnListView mclv;
-    private string tmp;
 
+    public Dictionary<Button, int> tradeButtonShit = new Dictionary<Button, int>();
+        
 
     public void Start()
     {
         Instance = this;
+        
 
         events = new List<VisualEventInfo>();
         dayPercentageLastUpdated = -5;
@@ -152,7 +154,19 @@ public class UIManager : MonoBehaviour
         mclv.columns["name"].bindCell = (element, index) =>
             (element as Label).text = ((GoodType)index).ToString();
         mclv.columns["price"].bindCell = (element, index) =>
-            (element as Label).text = bank.Instance.goods[index].price.ToString();
+        {
+            var currentPrice = bank.Instance.goods[index].price;
+            if (bank.Instance.goodsAtMarketOpenToday.Count == 0)
+            {
+                (element as Label).text = currentPrice.ToString();
+                return;
+            }
+
+            var dayOpenPrice = bank.Instance.goodsAtMarketOpenToday[index].price;
+            var delta = currentPrice - dayOpenPrice;
+            string deltastring = delta >= 0 ? $"+{delta}" : delta.ToString();  
+            (element as Label).text = $"{currentPrice} ({deltastring})";
+        };
         mclv.columns["position"].bindCell = (element, index) =>
         {
             var bgi = bank.Instance.goods[index];
@@ -161,22 +175,38 @@ public class UIManager : MonoBehaviour
             {
                 if (bgi.playerPositions[i].id == Player.LocalPlayerId())
                 {
-                    (element as Label).text = bgi.playerPositions[i].position.ToString();
+                    var pos = bgi.playerPositions[i].position;
+                    if (bank.Instance.goodsAtMarketOpenToday.Count == 0)
+                    {
+                        (element as Label).text = pos.ToString();
+                        return;
+                    }
+                    var dayOpenPos = bank.Instance.goodsAtMarketOpenToday[index].playerPositions[i].position;
+                    var delta = pos - dayOpenPos;
+                    string deltastring = delta >= 0 ? $"+{delta}" : delta.ToString();  
+                    (element as Label).text = $"{pos} ({deltastring})";
                     return;
                 }
             }
         };
         mclv.columns["supply"].bindCell = (element, index) =>
         {
-            (element as Label).text = bank.Instance.goods[index].inventory.ToString();
+            var inventory = bank.Instance.goods[index].inventory;
+            if (bank.Instance.goodsAtMarketOpenToday.Count == 0)
+            {
+                (element as Label).text = inventory.ToString();
+                return;
+            }
+            var dayOpenInv = bank.Instance.goodsAtMarketOpenToday[index].inventory;
+            var delta = inventory - dayOpenInv;
+            string deltastring = delta >= 0 ? $"+{delta}" : delta.ToString();  
+            (element as Label).text = $"{inventory} ({deltastring})";
         };
         mclv.columns["trade"].bindCell = (element, index) =>
         {
             (element as Button).text = "Trade";
-            (element as Button).clicked -=
-                () => ShowTradeView((GoodType)index);
-            (element as Button).clicked +=
-                () => ShowTradeView((GoodType)index);
+            tradeButtonShit[element as Button] = index;
+            (element as Button).RegisterCallback<ClickEvent>(TradeButtonShitClick);
         };
 
         twps = new TradeWithPlayerScreen();
@@ -184,6 +214,11 @@ public class UIManager : MonoBehaviour
 
         gameEndModal = document.rootVisualElement.Q<VisualElement>("GameEndModal");
         gameEndModal.style.display = DisplayStyle.None;
+    }
+
+    public void TradeButtonShitClick(ClickEvent evt)
+    {
+        ShowTradeView((GoodType)tradeButtonShit[evt.target as Button]);
     }
 
     public void UpdateForNewPlayer()
@@ -246,8 +281,6 @@ public class UIManager : MonoBehaviour
             playerListView.itemsSource = shitlist2;
             playerListView.RefreshItems();
 
-            document.rootVisualElement.Q<Label>("trade-price-label").text =
-                bank.Instance.goods[(int)goodToTrade].price.ToString();
             tradeSection.Q<Label>("trade-price-label").text =
                 bank.Instance.goods[(int)goodToTrade].price.ToString();
             tradeSection.Q<Label>("trade-good-type").text = goodToTrade.ToString();
@@ -297,6 +330,13 @@ public class UIManager : MonoBehaviour
                 {
                     if (marketChanged)
                     {
+                        for (int i = events.Count-1; i >=0; i--)
+                        {
+                            if (events[i].info.secondsFromStart < (now - gameState.gameStartTime))
+                            {
+                                events.RemoveAt(i);
+                            }
+                        }
                         localMarketOpenNow = gameState.marketOpenNow;
                         if (localMarketOpenNow)
                             mclv.style.opacity = 1f;
