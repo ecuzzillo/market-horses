@@ -114,4 +114,11 @@ public class Player : NetworkBehaviour
             UIManager.Instance.tickerView.RefreshItems();
         }
     }
+
+    //has to be on player because local client owns this player object
+    [ServerRpc]
+    public void ConsummateDealServerRpc(ulong offerGuid)
+    {
+        bank.Instance.ConsummateDeal(offerGuid);
+    }
 }

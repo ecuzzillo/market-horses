@@ -251,8 +251,7 @@ public class bank : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
-    public void ConsummateDealServerRpc(ulong offerGuid)
+    public void ConsummateDeal(ulong offerGuid)
     {
         //figure out how much good to transfer
         //figure out how much money to transfer

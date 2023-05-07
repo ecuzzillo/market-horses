@@ -36,6 +36,9 @@ public class TradeWithPlayerScreen
 
     public List<int> offerIdxsForMe;
 
+    public Dictionary<Button, ulong> acceptButtonGuids;
+    public Dictionary<Button, ulong> rejectButtonGuids;
+
     public void Init()
     {
         var uim = UIManager.Instance;
@@ -160,38 +163,41 @@ public class TradeWithPlayerScreen
         receivedOffersListView.columns["accept"].bindCell = (element, i) =>
         {
             var btn = (element as Button);
-            btn.text = "Y";
             var thisguid = bank.Instance.allOffers[offerIdxsForMe[i]].guid;
-            Action cb = () =>
-            {
-                bank.Instance.ConsummateDealServerRpc(thisguid);
-                UpdateOfferViewShitBasedOnBank();
-            };
-            btn.clicked -= cb;
-            btn.clicked += cb;
+            acceptButtonGuids[btn] = thisguid;
+
+            btn.RegisterCallback<ClickEvent>(AcceptCb);
         };
         receivedOffersListView.columns["reject"].bindCell = (element, i) =>
         {
             var btn = (element as Button);
             btn.text = "N";
-            var thisguid = bank.Instance.allOffers[offerIdxsForMe[i]].guid;
-            Action cb = () =>
-            {
-                for (int j = 0; j < bank.Instance.allOffers.Count; j++)
-                {
-                    if (bank.Instance.allOffers[j].guid == thisguid)
-                    {
-                        Debug.Log($"reject cb {thisguid}");
-                        bank.Instance.allOffers.RemoveAt(j);
-                        break;
-                    }
-                }
-
-                UpdateOfferViewShitBasedOnBank();
-            };
-            btn.clicked -= cb;
-            btn.clicked += cb;         
+            btn.RegisterCallback<ClickEvent>(RejectCb);         
         };
+    }
+
+    public void AcceptCb(ClickEvent evt)
+    {
+        var thisguid = acceptButtonGuids[(evt.currentTarget as Button)];
+        Player.LocalPlayer().ConsummateDealServerRpc(thisguid);
+        UpdateOfferViewShitBasedOnBank();
+    }
+
+    public void RejectCb(ClickEvent evt)
+    {
+        var thisguid = rejectButtonGuids[evt.currentTarget as Button];
+
+        for (int j = 0; j < bank.Instance.allOffers.Count; j++)
+        {
+            if (bank.Instance.allOffers[j].guid == thisguid)
+            {
+                Debug.Log($"reject cb {thisguid}");
+                bank.Instance.allOffers.RemoveAt(j);
+                break;
+            }
+        }
+
+        UpdateOfferViewShitBasedOnBank();
     }
     
     
@@ -221,6 +227,8 @@ public class TradeWithPlayerScreen
         }
 
         receivedOffersListView.itemsSource = offerIdxsForMe;
+        acceptButtonGuids.Clear();
+        rejectButtonGuids.Clear();
         receivedOffersListView.RefreshItems();
     }
 }
