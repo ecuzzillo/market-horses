@@ -36,8 +36,8 @@ public class TradeWithPlayerScreen
 
     public List<int> offerIdxsForMe;
 
-    public Dictionary<Button, ulong> acceptButtonGuids;
-    public Dictionary<Button, ulong> rejectButtonGuids;
+    public Dictionary<Button, ulong> acceptButtonGuids = new Dictionary<Button, ulong>();
+    public Dictionary<Button, ulong> rejectButtonGuids = new Dictionary<Button, ulong>();
 
     public void Init()
     {
@@ -217,19 +217,22 @@ public class TradeWithPlayerScreen
 
     public void UpdateOfferViewShitBasedOnBank()
     {
-        var localplayer = Player.LocalPlayerId();
-        offerIdxsForMe.Clear();
-
-        var allOffers = bank.Instance.allOffers;
-        for (int i = 0; i < allOffers.Count; i++)
+        if (bank.Instance.IsSpawned && bank.Instance.goods.Count > 0)
         {
-            if (allOffers[i].OffereePlayerId == localplayer)
-                offerIdxsForMe.Add(i);
-        }
+            var localplayer = Player.LocalPlayerId();
+            offerIdxsForMe.Clear();
 
-        receivedOffersListView.itemsSource = offerIdxsForMe;
-        acceptButtonGuids.Clear();
-        rejectButtonGuids.Clear();
-        receivedOffersListView.RefreshItems();
+            var allOffers = bank.Instance.allOffers;
+            for (int i = 0; i < allOffers.Count; i++)
+            {
+                if (allOffers[i].OffereePlayerId == localplayer)
+                    offerIdxsForMe.Add(i);
+            }
+
+            receivedOffersListView.itemsSource = offerIdxsForMe;
+            acceptButtonGuids.Clear();
+            rejectButtonGuids.Clear();
+            receivedOffersListView.RefreshItems();
+        }
     }
 }
