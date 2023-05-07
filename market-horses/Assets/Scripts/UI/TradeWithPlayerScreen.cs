@@ -163,6 +163,7 @@ public class TradeWithPlayerScreen
         receivedOffersListView.columns["accept"].bindCell = (element, i) =>
         {
             var btn = (element as Button);
+            btn.text = "Y";
             var thisguid = bank.Instance.allOffers[offerIdxsForMe[i]].guid;
             acceptButtonGuids[btn] = thisguid;
 
@@ -172,6 +173,9 @@ public class TradeWithPlayerScreen
         {
             var btn = (element as Button);
             btn.text = "N";
+            var thisguid = bank.Instance.allOffers[offerIdxsForMe[i]].guid;
+
+            rejectButtonGuids[btn] = thisguid;
             btn.RegisterCallback<ClickEvent>(RejectCb);         
         };
     }
