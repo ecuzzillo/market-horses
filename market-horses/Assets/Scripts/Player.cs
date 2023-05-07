@@ -94,7 +94,14 @@ public class Player : NetworkBehaviour
     [ServerRpc]
     public void CmdBuyStockServerRpc(GoodType type, int inc)
     {
-        bank.Instance.BuyStockServerRpc(type, id, inc);
+        if (inc > 0)
+        {
+            bank.Instance.BuyStockServerRpc(type, id, inc);
+        }
+        else
+        {
+            bank.Instance.SellStockServerRpc(type, id, -inc);
+        }
     }
     
     [ClientRpc]

@@ -367,7 +367,7 @@ public class UIManager : MonoBehaviour
 
     public void OnTradeSellClick(ClickEvent evt)
     {
-        bank.Instance.SellStockServerRpc(goodToTrade, Player.LocalPlayerId(), 1);
+        Player.LocalPlayer().CmdBuyStockServerRpc(goodToTrade, -1);
     }
 
     public void OnTradeExitClick(ClickEvent evt)
