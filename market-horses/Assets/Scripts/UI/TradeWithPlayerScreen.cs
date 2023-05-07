@@ -212,6 +212,7 @@ public class TradeWithPlayerScreen
     public void MyUpdate()
     {
         UpdateOfferViewShitBasedOnBank();
+        UpdatePlayerList();
     }
 
     public void UpdateOfferViewShitBasedOnBank()
