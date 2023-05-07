@@ -44,7 +44,7 @@
         </ui:VisualElement>
         <ui:VisualElement name="trade-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0);">
             <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); max-height: 40px; flex-direction: row; align-items: center; justify-content: center;">
-                <ui:Label tabindex="-1" text="Label" display-tooltip-when-elided="true" />
+                <ui:Label tabindex="-1" text="Type" display-tooltip-when-elided="true" name="trade-good-type" style="left: 10px; position: absolute;" />
                 <ui:Label tabindex="-1" text="Price" display-tooltip-when-elided="true" style="left: 27%; right: initial; position: absolute;" />
                 <ui:Label tabindex="-1" text="Position" display-tooltip-when-elided="true" />
             </ui:VisualElement>
