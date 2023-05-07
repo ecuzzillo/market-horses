@@ -274,6 +274,8 @@ public class UIManager : MonoBehaviour
             bank.Instance.goods.Count > 0 &&
             bank.Instance.playerIds.Contains(Player.LocalPlayerId())) 
         {
+
+            
             var shitlist = new List<BankGoodInfo>();
 
             for (int i = 0; i < (int)GoodType.NumGoodType; i++)
@@ -305,6 +307,7 @@ public class UIManager : MonoBehaviour
 
             var gameState = bank.Instance.gameState.Value;
             var now = Time.time;
+            
 
             if (gameState.dayNumber == bank.Instance.NumberOfDaysInGame)
             {
@@ -335,24 +338,31 @@ public class UIManager : MonoBehaviour
             else
             {
 
+
                 var marketChanged = (localMarketOpenNow != gameState.marketOpenNow);
                 if (marketChanged && !gameState.marketOpenNow)
                 {
                     ShowMainView();
                 }
+
+                if (gameState.gameStartTime >= 0)
+                {
+                    for (int i = events.Count-1; i >=0; i--)
+                    {
+                        if (events[i].info.secondsFromStart < (now - gameState.gameStartTime))
+                        {
+                            events.RemoveAt(i);
+                        }
+                    }
+                }
+                
                 if (marketChanged ||
                     (gameState.gameStartTime >= 0 &&
                      now - dayPercentageLastUpdated > bank.Instance.SecondsBetweenClockUIUpdates))
                 {
                     if (marketChanged)
                     {
-                        for (int i = events.Count-1; i >=0; i--)
-                        {
-                            if (events[i].info.secondsFromStart < (now - gameState.gameStartTime))
-                            {
-                                events.RemoveAt(i);
-                            }
-                        }
+
                         localMarketOpenNow = gameState.marketOpenNow;
                         if (localMarketOpenNow)
                             mclv.style.opacity = 1f;
