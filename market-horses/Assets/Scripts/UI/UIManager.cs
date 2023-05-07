@@ -119,7 +119,19 @@ public class UIManager : MonoBehaviour
         
         playerListView.columns["name"].bindCell = (element, i) =>
         {
-            (element as Label).text = bank.Instance.playerNames[i].ToString();
+            var offersforme = TradeWithPlayerScreen.Instance.offerIdxsForMe;
+            var txt = bank.Instance.playerNames[i].ToString();
+
+            for (int j = 0; j < offersforme.Count; j++)
+            {
+                if (bank.Instance.allOffers[offersforme[j]].OfferingPlayerId == bank.Instance.playerIds[i])
+                {
+                    txt += "[offer!]";
+                    break;
+                }
+            }
+
+            (element as Label).text = txt;
         };
         playerListView.columns["networth"].bindCell = (element, i) =>
         {
@@ -324,6 +336,10 @@ public class UIManager : MonoBehaviour
             {
 
                 var marketChanged = (localMarketOpenNow != gameState.marketOpenNow);
+                if (marketChanged && !gameState.marketOpenNow)
+                {
+                    ShowMainView();
+                }
                 if (marketChanged ||
                     (gameState.gameStartTime >= 0 &&
                      now - dayPercentageLastUpdated > bank.Instance.SecondsBetweenClockUIUpdates))

@@ -39,8 +39,11 @@ public class TradeWithPlayerScreen
     public Dictionary<Button, ulong> acceptButtonGuids = new Dictionary<Button, ulong>();
     public Dictionary<Button, ulong> rejectButtonGuids = new Dictionary<Button, ulong>();
 
+    public static TradeWithPlayerScreen Instance;
+
     public void Init()
     {
+        Instance = this;
         var uim = UIManager.Instance;
         var document = uim.document;
         offerIdxsForMe = new List<int>();
