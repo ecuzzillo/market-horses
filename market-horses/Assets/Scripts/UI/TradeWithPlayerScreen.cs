@@ -164,8 +164,18 @@ public class TradeWithPlayerScreen
         {
             var btn = (element as Button);
             btn.text = "Y";
-            var thisguid = bank.Instance.allOffers[offerIdxsForMe[i]].guid;
-            acceptButtonGuids[btn] = thisguid;
+            var offer = bank.Instance.allOffers[offerIdxsForMe[i]];
+
+            if (bank.Instance.goods[(int)offer.goodType].playerPositions[Player.LocalPlayerIdx()].position < offer.count)
+            {
+                btn.SetEnabled(false);
+            }
+            else
+            {
+                btn.SetEnabled(true);
+            }
+
+            acceptButtonGuids[btn] = offer.guid;
 
             btn.RegisterCallback<ClickEvent>(AcceptCb);
         };
