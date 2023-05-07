@@ -166,7 +166,10 @@ public class TradeWithPlayerScreen
             btn.text = "Y";
             var offer = bank.Instance.allOffers[offerIdxsForMe[i]];
 
-            if (bank.Instance.goods[(int)offer.goodType].playerPositions[Player.LocalPlayerIdx()].position < offer.count)
+            if (bank.Instance.goods[(int)offer.goodType].playerPositions[Player.LocalPlayerIdx()].position < offer.count 
+                || (offer.count < 0 &&
+                    Math.Abs(offer.count) * offer.price >
+                    bank.Instance.playerFreeCash[bank.Instance.playerIds.IndexOf(offer.OffereePlayerId)])) 
             {
                 btn.SetEnabled(false);
             }
