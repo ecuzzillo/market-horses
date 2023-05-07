@@ -118,6 +118,7 @@ public class Player : NetworkBehaviour
         if (playerId == localPlayerId)
         {
             UIManager.Instance.events.Add(new VisualEventInfo { info = e, ReceivedTime = Time.time, type = goodType });
+            UIManager.Instance.events.Sort((a,b) => a.info.secondsFromStart.CompareTo(b.info.secondsFromStart));
             UIManager.Instance.tickerView.RefreshItems();
         }
     }

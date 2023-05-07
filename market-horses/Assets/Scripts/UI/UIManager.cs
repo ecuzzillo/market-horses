@@ -47,7 +47,8 @@ public class UIManager : MonoBehaviour
 
     public MultiColumnListView playerListView;
     public MultiColumnListView mclv;
-    
+    private string tmp;
+
 
     public void Start()
     {
@@ -92,10 +93,18 @@ public class UIManager : MonoBehaviour
         tickerView.bindItem = (element, i) =>
         {
             var myevent = events[i];
-            (element as Label).text =
-                $"(D{(int)(myevent.ReceivedTime / (bank.Instance.SecondsOfOpenMarketPerDay + bank.Instance.SecondsOfClosedMarketPerNight))}) " +
-                $"on day {(int)(myevent.info.secondsFromStart / (bank.Instance.SecondsOfOpenMarketPerDay + bank.Instance.SecondsOfClosedMarketPerNight))}, " +
-                $"{-myevent.info.quantity} units of {myevent.type} will be transacted!";
+            var tmp = $"(D{(int)(myevent.ReceivedTime / (bank.Instance.SecondsOfOpenMarketPerDay + bank.Instance.SecondsOfClosedMarketPerNight))}) " +
+                  $"on day {(int)(myevent.info.secondsFromStart / (bank.Instance.SecondsOfOpenMarketPerDay + bank.Instance.SecondsOfClosedMarketPerNight))}, ";
+            string tmp2;
+            if (myevent.info.quantity > 0)
+            {
+                tmp2 = $"{myevent.info.quantity} units of {myevent.type} will be sold!";
+            }
+            else
+            {
+                tmp2 = $"{-myevent.info.quantity} units of {myevent.type} will be bought!";
+            }
+            (element as Label).text = tmp + tmp2;
         };
         tickerView.itemsSource = events;
 
