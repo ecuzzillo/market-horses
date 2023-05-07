@@ -147,7 +147,7 @@ public class UIManager : MonoBehaviour
             button.text = "TRADE";
             Action cb = () =>
             {
-                if (bank.Instance.gameState.Value.marketOpenNow)
+                if (!bank.Instance.gameState.Value.marketOpenNow)
                     ShowTradeWithPlayerView(index);
             };
             button.clicked -= cb;

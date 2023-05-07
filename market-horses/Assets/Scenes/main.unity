@@ -578,8 +578,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PriceChangeAmount: 1
-  PlayerStartingCash: 100
-  PlayerStartingGoodsValue: 200
+  PlayerStartingCash: 300
+  PlayerStartingGoodsValue: 600
   probabilityOfTellingPlayerAboutAGivenEvent: 0.33
   SecondsOfOpenMarketPerDay: 20
   SecondsOfClosedMarketPerNight: 60
