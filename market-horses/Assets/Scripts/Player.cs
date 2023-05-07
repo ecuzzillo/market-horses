@@ -121,4 +121,18 @@ public class Player : NetworkBehaviour
     {
         bank.Instance.ConsummateDeal(offerGuid);
     }
+
+    [ServerRpc]
+    public void RejectDealServerRpc(ulong offerGuid)
+    {
+        for (int i = 0; i < bank.Instance.allOffers.Count; i++)
+        {
+            if (bank.Instance.allOffers[i].guid == offerGuid)
+            {
+                bank.Instance.allOffers.RemoveAt(i);
+                return;
+            }
+        }
+    }
+    
 }

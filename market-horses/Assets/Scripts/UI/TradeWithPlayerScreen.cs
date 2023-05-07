@@ -191,16 +191,7 @@ public class TradeWithPlayerScreen
     {
         var thisguid = rejectButtonGuids[evt.currentTarget as Button];
 
-        for (int j = 0; j < bank.Instance.allOffers.Count; j++)
-        {
-            if (bank.Instance.allOffers[j].guid == thisguid)
-            {
-                Debug.Log($"reject cb {thisguid}");
-                bank.Instance.allOffers.RemoveAt(j);
-                break;
-            }
-        }
-
+        Player.LocalPlayer().RejectDealServerRpc(thisguid);
         UpdateOfferViewShitBasedOnBank();
     }
     
