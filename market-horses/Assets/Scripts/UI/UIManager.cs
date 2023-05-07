@@ -49,12 +49,14 @@ public class UIManager : MonoBehaviour
     public MultiColumnListView mclv;
 
     public Dictionary<Button, int> tradeButtonShit = new Dictionary<Button, int>();
+
+    public float myLocalGameStartTime;
         
 
     public void Start()
     {
         Instance = this;
-        
+        myLocalGameStartTime = -1;
 
         events = new List<VisualEventInfo>();
         dayPercentageLastUpdated = -5;
@@ -272,10 +274,10 @@ public class UIManager : MonoBehaviour
     {
         if (bank.Instance.IsSpawned &&
             bank.Instance.goods.Count > 0 &&
-            bank.Instance.playerIds.Contains(Player.LocalPlayerId())) 
+            bank.Instance.playerIds.Contains(Player.LocalPlayerId()))
         {
-
-            
+            if (myLocalGameStartTime < 0)
+                myLocalGameStartTime = Time.time;
             var shitlist = new List<BankGoodInfo>();
 
             for (int i = 0; i < (int)GoodType.NumGoodType; i++)
@@ -306,7 +308,7 @@ public class UIManager : MonoBehaviour
             localPlayerNetWorthLabel.text = ComputePlayerNetWorth(localPlayerIdx).ToString();
 
             var gameState = bank.Instance.gameState.Value;
-            var now = Time.time;
+            var now = Time.time - myLocalGameStartTime;
             
 
             if (gameState.dayNumber == bank.Instance.NumberOfDaysInGame)
@@ -337,8 +339,6 @@ public class UIManager : MonoBehaviour
             }
             else
             {
-
-
                 var marketChanged = (localMarketOpenNow != gameState.marketOpenNow);
                 if (marketChanged && !gameState.marketOpenNow)
                 {
@@ -349,7 +349,7 @@ public class UIManager : MonoBehaviour
                 {
                     for (int i = events.Count-1; i >=0; i--)
                     {
-                        if (events[i].info.secondsFromStart < (now - gameState.gameStartTime))
+                        if (events[i].info.secondsFromStart < now)
                         {
                             events.RemoveAt(i);
                         }

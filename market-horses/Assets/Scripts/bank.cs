@@ -218,7 +218,7 @@ public class bank : NetworkBehaviour
             for (int i = 0; i < TotalEventsPerGame; i++)
             {
                 var myevent = new EventInfo();
-                var type = Random.Range(0, ((int)GoodType.NumGoodType - 1));
+                var type = Random.Range(0, (int)GoodType.NumGoodType);
                 myevent.quantity = Random.Range(-100, 100);
                 myevent.secondsFromStart = Random.Range(5,
                     (int)(NumberOfDaysInGame * (SecondsOfOpenMarketPerDay + SecondsOfClosedMarketPerNight)));
@@ -459,7 +459,7 @@ public class bank : NetworkBehaviour
             for (int j = 0; j < events.Length; j++)
             {
                 var eventInfo = events[j];
-                if (!eventInfo.done && eventInfo.secondsFromStart < time)
+                if (!eventInfo.done && eventInfo.secondsFromStart < (time - gameState.Value.gameStartTime))
                 {
                     //do the thing
                     var bankGoodInfo = goods[i];
