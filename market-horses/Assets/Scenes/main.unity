@@ -585,6 +585,7 @@ MonoBehaviour:
   SecondsOfClosedMarketPerNight: 10
   SecondsBetweenClockUIUpdates: 2
   NumberOfDaysInGame: 10
+  TotalEventsPerGame: 60
   gameState:
     m_InternalValue:
       dayNumber: 0

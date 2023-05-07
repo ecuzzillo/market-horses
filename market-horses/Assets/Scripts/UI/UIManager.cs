@@ -95,7 +95,7 @@ public class UIManager : MonoBehaviour
             (element as Label).text =
                 $"(D{(int)(myevent.ReceivedTime / (bank.Instance.SecondsOfOpenMarketPerDay + bank.Instance.SecondsOfClosedMarketPerNight))}) " +
                 $"on day {(int)(myevent.info.secondsFromStart / (bank.Instance.SecondsOfOpenMarketPerDay + bank.Instance.SecondsOfClosedMarketPerNight))}, " +
-                $"{myevent.info.quantity} units of {myevent.type} will be transacted!";
+                $"{-myevent.info.quantity} units of {myevent.type} will be transacted!";
         };
         tickerView.itemsSource = events;
 

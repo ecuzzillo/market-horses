@@ -141,6 +141,7 @@ public class bank : NetworkBehaviour
     public float SecondsOfClosedMarketPerNight;
     public float SecondsBetweenClockUIUpdates;
     public int NumberOfDaysInGame;
+    public int TotalEventsPerGame;
 
     [Header("Network stuff")]
     public NetworkList<BankGoodInfo> goods;
@@ -208,7 +209,7 @@ public class bank : NetworkBehaviour
 
             UIManager.Instance.UpdateForNewPlayer();
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < TotalEventsPerGame; i++)
             {
                 var myevent = new EventInfo();
                 var type = Random.Range(0, ((int)GoodType.NumGoodType - 1));
