@@ -55,7 +55,7 @@ public class TradeWithPlayerScreen
         makeOfferButton.RegisterCallback<ClickEvent>(_ =>
         {
             makeOfferSection.style.display = DisplayStyle.Flex;
-            receiveOffersSection.style.display = DisplayStyle.None;
+            //receiveOffersSection.style.display = DisplayStyle.None;
         });
         /*receiveOffersButton = tradeWithPlayerSection.Q<Button>("receive-offers");
         receiveOffersButton.RegisterCallback<ClickEvent>(_ =>
