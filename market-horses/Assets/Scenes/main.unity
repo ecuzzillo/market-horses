@@ -256,13 +256,14 @@ MonoBehaviour:
   networkManager: {fileID: 128620026}
   localPlayerName: 
   twps:
-    twpsIsBuying: 1
+    twpsIsSendingGoods: 1
     PlayerIdx: 0
     goodToTrade: 0
     checkMark: {fileID: 2800000, guid: e859b32122131af4fafca67ee2fb70e8, type: 3}
     xmark: {fileID: 2800000, guid: 64fe4d6402bd13943acfa196b8186a86, type: 3}
     offerIdxsForMe: 
   goodToTrade: 0
+  myLocalGameStartTime: 0
 --- !u!114 &256345111
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -581,7 +582,7 @@ MonoBehaviour:
   PlayerStartingCash: 300
   PlayerStartingGoodsValue: 600
   probabilityOfTellingPlayerAboutAGivenEvent: 0.33
-  SecondsOfOpenMarketPerDay: 40
+  SecondsOfOpenMarketPerDay: 1
   SecondsOfClosedMarketPerNight: 120
   SecondsBetweenClockUIUpdates: 1
   NumberOfDaysInGame: 7

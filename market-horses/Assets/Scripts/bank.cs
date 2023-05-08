@@ -6,6 +6,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 [Serializable]
@@ -18,7 +19,7 @@ public struct PlayerGoodInfo : INetworkSerializeByMemcpy
 [Serializable]
 public struct Offer : INetworkSerializeByMemcpy, IEquatable<Offer>
 {
-    public bool OfferToBuy;
+    [FormerlySerializedAs("OfferToBuy")] public bool SendingGoods;
     public GoodType goodType;
     public ulong OfferingPlayerId;
     public ulong OffereePlayerId;
@@ -28,7 +29,7 @@ public struct Offer : INetworkSerializeByMemcpy, IEquatable<Offer>
 
     public bool Equals(Offer other)
     {
-        return OfferToBuy == other.OfferToBuy &&
+        return SendingGoods == other.SendingGoods &&
                goodType == other.goodType &&
                OfferingPlayerId == other.OfferingPlayerId &&
                OffereePlayerId == other.OffereePlayerId &&
@@ -286,8 +287,8 @@ public class bank : NetworkBehaviour
         var offereeIdx = Player.PlayerIdxFromId(o.OffereePlayerId);
         var offeringIdx = Player.PlayerIdxFromId(o.OfferingPlayerId);
 
-        var receivingGoodsIdx = o.OfferToBuy ? offeringIdx : offereeIdx;
-        var receivingCashIdx = o.OfferToBuy ? offereeIdx : offeringIdx;
+        var receivingGoodsIdx = o.SendingGoods ? offeringIdx : offereeIdx;
+        var receivingCashIdx = o.SendingGoods ? offereeIdx : offeringIdx;
         for (int i = 0; i < goods.Count; i++)
         {
             if (i == (int)o.goodType)

@@ -18,7 +18,7 @@ public class TradeWithPlayerScreen
 
     public MultiColumnListView receivedOffersListView;
     
-    public bool twpsIsBuying = true;
+    [FormerlySerializedAs("twpsIsBuying")] public bool twpsIsSendingGoods = true;
     public Button buytoggle;
     public DropdownField GoodDropDown;
     public DropdownField PlayerDropDown;
@@ -57,20 +57,20 @@ public class TradeWithPlayerScreen
             makeOfferSection.style.display = DisplayStyle.Flex;
             receiveOffersSection.style.display = DisplayStyle.None;
         });
-        receiveOffersButton = tradeWithPlayerSection.Q<Button>("receive-offers");
+        /*receiveOffersButton = tradeWithPlayerSection.Q<Button>("receive-offers");
         receiveOffersButton.RegisterCallback<ClickEvent>(_ =>
         {
             makeOfferSection.style.display = DisplayStyle.None;
             receiveOffersSection.style.display = DisplayStyle.Flex;
-        });
+        });*/
 
         xButton = tradeWithPlayerSection.Q<Button>("x-button");
         xButton.RegisterCallback<ClickEvent>(_ => UIManager.Instance.HideTradeWithPlayerView());
         
         makeOfferSection = tradeWithPlayerSection.Q<VisualElement>("make-offer-section");
         makeOfferSection.style.display = DisplayStyle.Flex;
-        receiveOffersSection = tradeWithPlayerSection.Q<VisualElement>("receive-offers-section");
-        receiveOffersSection.style.display = DisplayStyle.None;
+        /*receiveOffersSection = tradeWithPlayerSection.Q<VisualElement>("receive-offers-section");
+        receiveOffersSection.style.display = DisplayStyle.None;*/
         
         //===================================
         // make offers section
@@ -78,8 +78,8 @@ public class TradeWithPlayerScreen
         buytoggle = tradeWithPlayerSection.Q<Button>("buy-sell-toggle");
         buytoggle.RegisterCallback<ClickEvent>(evt =>
         {
-            twpsIsBuying = !twpsIsBuying;
-            buytoggle.text = twpsIsBuying ? "Buying" : "Selling";
+            twpsIsSendingGoods = !twpsIsSendingGoods;
+            buytoggle.text = twpsIsSendingGoods ? "Goods" : "Money";
         });
         
         GoodDropDown = tradeWithPlayerSection.Q<DropdownField>("choose-good");
@@ -117,23 +117,27 @@ public class TradeWithPlayerScreen
             var newoffer = new Offer
             {
                 count = Int32.Parse(QuantityField.text),
-                goodType = goodToTrade,
+                goodType = twpsIsSendingGoods ? goodToTrade : GoodType.NumGoodType,
                 OffereePlayerId = bank.Instance.playerIds[PlayerIdx],
                 OfferingPlayerId = Player.LocalPlayerId(),
-                OfferToBuy = twpsIsBuying,
-                price = Single.Parse(PriceField.text),
+                SendingGoods = twpsIsSendingGoods,
+                price = 1,
                 guid = bank.Instance.nextGuid++
             };
 
-            
-            Player.LocalPlayer().AddNewOfferServerRpc(newoffer);
-            uim.HideTradeWithPlayerView();
+            if ((twpsIsSendingGoods &&
+                 bank.Instance.goods[(int)goodToTrade].playerPositions[PlayerIdx].position >= newoffer.count) ||
+                (!twpsIsSendingGoods && bank.Instance.playerFreeCash[PlayerIdx] >= newoffer.count))
+            {
+                Player.LocalPlayer().AddNewOfferServerRpc(newoffer);
+                uim.HideTradeWithPlayerView();
+            }
         });
         
         //=================================
         // receive offers section
         //================================
-        receivedOffersListView = tradeWithPlayerSection.Q<MultiColumnListView>("offers-list");
+        /*receivedOffersListView = tradeWithPlayerSection.Q<MultiColumnListView>("offers-list");
         receivedOffersListView.columns["player-name"].makeCell = () => new Label();
         receivedOffersListView.columns["good"].makeCell = () => new Label();
         receivedOffersListView.columns["summary"].makeCell = () => new Label();
@@ -154,7 +158,7 @@ public class TradeWithPlayerScreen
         {
             var offer = bank.Instance.allOffers[offerIdxsForMe[i]];
             //with options, this string will get more complicated
-            var actionString = offer.OfferToBuy ? "BUY" : "SELL";
+            var actionString = offer.SendingGoods ? "BUY" : "SELL";
             (element as Label).text = $"{actionString} {offer.count} @ {offer.price}";
         };
         receivedOffersListView.columns["cost"].bindCell = (element, i) =>
@@ -193,7 +197,7 @@ public class TradeWithPlayerScreen
 
             rejectButtonGuids[btn] = thisguid;
             btn.RegisterCallback<ClickEvent>(RejectCb);         
-        };
+        };*/
     }
 
     public void AcceptCb(ClickEvent evt)
@@ -228,7 +232,7 @@ public class TradeWithPlayerScreen
 
     public void UpdateOfferViewShitBasedOnBank()
     {
-        if (bank.Instance.IsSpawned && bank.Instance.goods.Count > 0)
+        /*if (bank.Instance.IsSpawned && bank.Instance.goods.Count > 0)
         {
             var localplayer = Player.LocalPlayerId();
             offerIdxsForMe.Clear();
@@ -244,6 +248,6 @@ public class TradeWithPlayerScreen
             acceptButtonGuids.Clear();
             rejectButtonGuids.Clear();
             receivedOffersListView.RefreshItems();
-        }
+        }*/
     }
 }

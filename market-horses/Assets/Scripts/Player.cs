@@ -88,7 +88,27 @@ public class Player : NetworkBehaviour
     [ServerRpc]
     public void AddNewOfferServerRpc(Offer newoffer)
     {
-        bank.Instance.allOffers.Add(newoffer);
+        //bank.Instance.allOffers.Add(newoffer);
+        var offeringPlayerIdx = bank.Instance.playerIds.IndexOf(newoffer.OfferingPlayerId);
+        var offereePlayerIdx = bank.Instance.playerIds.IndexOf(newoffer.OffereePlayerId);
+
+        if (newoffer.SendingGoods)
+        {
+            var bgi = bank.Instance.goods[(int)newoffer.goodType];
+            var offeringPos = bgi.playerPositions[offeringPlayerIdx];
+            offeringPos.position -= newoffer.count;
+            bgi.playerPositions[offeringPlayerIdx] = offeringPos;
+            var offereePos = bgi.playerPositions[offereePlayerIdx];
+            offereePos.position += newoffer.count;
+            bgi.playerPositions[offereePlayerIdx] = offereePos;
+
+            bank.Instance.goods[(int)newoffer.goodType] = bgi;
+        }
+        else
+        {
+            bank.Instance.playerFreeCash[offeringPlayerIdx] -= newoffer.count;
+            bank.Instance.playerFreeCash[offereePlayerIdx] += newoffer.count;
+        }
     }
 
     [ServerRpc]

@@ -58,37 +58,23 @@
         </ui:VisualElement>
         <ui:VisualElement name="trade-with-player-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); align-items: center; justify-content: flex-start; display: flex; align-self: stretch;">
             <ui:VisualElement name="TabRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-height: 40px;">
-                <ui:Button text="Make Offer" display-tooltip-when-elided="true" name="make-offer" style="background-image: none;" />
-                <ui:Button text="Receive Offers" display-tooltip-when-elided="true" name="receive-offers" />
+                <ui:Button text="Send Shit" display-tooltip-when-elided="true" name="make-offer" style="background-image: none;" />
                 <ui:Button text="X" display-tooltip-when-elided="true" name="x-button" />
             </ui:VisualElement>
-            <ui:VisualElement name="make-offer-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); display: none;">
+            <ui:VisualElement name="make-offer-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); display: flex;">
                 <ui:VisualElement name="TopRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-width: 390px; max-height: 40px; min-width: 0;">
-                    <ui:Button text="Buying" display-tooltip-when-elided="true" name="buy-sell-toggle" />
+                    <ui:Button text="Goods" display-tooltip-when-elided="true" name="buy-sell-toggle" />
                     <ui:DropdownField index="0" choices="Horses" name="choose-good" />
                     <ui:Label tabindex="-1" text="To" display-tooltip-when-elided="true" />
                     <ui:DropdownField index="0" choices="Elliot" name="choose-player" />
                 </ui:VisualElement>
                 <ui:VisualElement name="SecondRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-height: 40px;">
                     <ui:TextField picking-mode="Ignore" label="Quantity" value="0" name="quantity-field" />
-                    <ui:TextField picking-mode="Ignore" label="Price" value="0" name="price-field" />
                 </ui:VisualElement>
                 <ui:VisualElement name="ThirdRow" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: row; max-height: 40px; align-items: flex-end; justify-content: center;">
                     <ui:Button text="Cancel" display-tooltip-when-elided="true" name="cancel-button" />
                     <ui:Button text="Confirm" display-tooltip-when-elided="true" name="confirm-button" />
                 </ui:VisualElement>
-            </ui:VisualElement>
-            <ui:VisualElement name="receive-offers-section" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); width: 100%;">
-                <ui:MultiColumnListView name="offers-list" fixed-item-height="40" style="flex-direction: row; justify-content: space-between;">
-                    <ui:Columns>
-                        <ui:Column name="player-name" title="From" stretchable="true" />
-                        <ui:Column name="good" title="Good" stretchable="true" />
-                        <ui:Column name="summary" title="Summary" stretchable="true" />
-                        <ui:Column name="cost" title="Cost" stretchable="true" />
-                        <ui:Column name="accept" stretchable="true" />
-                        <ui:Column name="reject" stretchable="true" />
-                    </ui:Columns>
-                </ui:MultiColumnListView>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
