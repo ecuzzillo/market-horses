@@ -582,7 +582,7 @@ MonoBehaviour:
   PlayerStartingCash: 300
   PlayerStartingGoodsValue: 600
   probabilityOfTellingPlayerAboutAGivenEvent: 0.33
-  SecondsOfOpenMarketPerDay: 1
+  SecondsOfOpenMarketPerDay: 40
   SecondsOfClosedMarketPerNight: 120
   SecondsBetweenClockUIUpdates: 1
   NumberOfDaysInGame: 7
